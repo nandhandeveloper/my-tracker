@@ -1,18 +1,16 @@
-import * as mongoose from 'mongoose';
+import {Schema, Document} from 'mongoose';
 
-export const ProjectSchema = new mongoose.Schema({
+export const ProjectSchema = new Schema({
     name: { type: String, required: true },
     status: { type: String, required: true },
-    isSelected: { type: Boolean, required: true },
-    createdAt: { type: String, required: true },
-    updatedAt: { type: String, required: true },
-});
+    isChoosen: { type: Boolean, required: true },
+}, {timestamps: true});
 
-export interface Project extends mongoose.Document {
+export interface Project extends Document {
     id?: string;
     name: string;
     status: string;
     isChoosen: boolean;
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }

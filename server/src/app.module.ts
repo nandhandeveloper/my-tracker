@@ -5,9 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { ProjectModule } from './project/project.module';
 
+const { NODE_ENV } = process.env;
+
 @Module({
-  imports: [ConfigModule.forRoot({envFilePath: 'env.local'}), MongooseModule.forRoot(process.env.DB_CONNECTION), ProjectModule],
+  imports: [ConfigModule.forRoot({ envFilePath: `env.${NODE_ENV}` }),
+  MongooseModule.forRoot(process.env.DB_CONNECTION),
+    ProjectModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

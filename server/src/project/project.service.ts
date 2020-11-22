@@ -1,4 +1,6 @@
 import { Project } from './project.model';
+import { ProjectDTO } from './ProjectDTO';
+
 import { Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from "mongoose";
@@ -9,21 +11,21 @@ import { ThrowExeptionHandler } from '../util/throwExecptionHandler';
 export class ProjectService {
     constructor(@InjectModel('Project') private projectModel: Model<Project>) { }
 
-    async createProject(incomingProject: Project): Promise<Project> {
+     async createProject(incomingProject: ProjectDTO): Promise<ProjectDTO> {
         const { name } = incomingProject;
         try {
             const existingProject = await this.projectModel.findOne({ name }).exec();
             if (existingProject) {
                 throw new UnprocessableEntityException(`Project with name ${name} already exists`);
             }
-            const newProject = new this.projectModel({ ...incomingProject, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+            const newProject = new this.projectModel({ ...incomingProject });
             return newProject.save();
         } catch (error) {
             ThrowExeptionHandler(error);
         }
     }
 
-    async findAllProject(): Promise<Project[]> {
+    async findAllProjects(): Promise<ProjectDTO[]> {
         try {
             return await this.projectModel.find().exec();
         } catch (error) {
@@ -44,19 +46,16 @@ export class ProjectService {
         }
     }
 
-    async updateProject(id: string, updateProject: Project): Promise<Project> {
+    async updateProject(id: string, updateProject: ProjectDTO): Promise<ProjectDTO> {
         const { name,
             status,
             isChoosen,
-            createdAt,
-            updatedAt } = updateProject;
+        } = updateProject;
         try {
             const existingProject = await this.findProjectById(id);
             existingProject.name = name;
             existingProject.status = status;
             existingProject.isChoosen = isChoosen;
-            existingProject.createdAt = createdAt;
-            existingProject.updatedAt = new Date().toISOString();
             return existingProject.save();
         } catch (error) {
             ThrowExeptionHandler(error);
@@ -68,16 +67,10 @@ export class ProjectService {
             const existingProject = await this.findProjectById(id);
             if (existingProject) {
                 const result = await this.projectModel.deleteOne({ _id: id }).exec();
-                if (result.n === 0) {
-                    throw new InternalServerErrorException(`Unable to find the project with ${id} to delete`);
-                }
             }
         } catch (error) {
             ThrowExeptionHandler(error);
         }
 
     }
-
-
-
 }

@@ -2,16 +2,16 @@ import { NotFoundException, UnprocessableEntityException, InternalServerErrorExc
 
 export interface ExemptionType {
     message: string;
-    statusCode: number;
+    status: number;
 }
-
-export const ThrowExeptionHandler = ({ message = 'Something went wrong please try again', statusCode }: ExemptionType) => {
-    switch (statusCode) {
+export const FALLBACK_MESSAGE  = 'Something went wrong. Please try again';
+export const ThrowExeptionHandler = ({ message = FALLBACK_MESSAGE, status }: ExemptionType) => {
+    switch (status) {
         case 404:
             throw new NotFoundException(message);
         case 422:
             throw new UnprocessableEntityException(message);
         default:
-            throw new InternalServerErrorException(message);
+            throw new InternalServerErrorException(FALLBACK_MESSAGE);
     }
 }
