@@ -30,6 +30,6 @@ export class ProjectController {
 
     @Delete(':id')
     async deleteProject(@Param('id') id: string) {
-        return await this.projectService.deleteProject(id);
+         await this.projectService.deleteProject(id);
     }
 }

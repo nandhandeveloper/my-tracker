@@ -1,3 +1,4 @@
+import { StoryService } from './../story/story.service';
 import { Project } from './project.model';
 import { ProjectDTO } from './ProjectDTO';
 
@@ -9,7 +10,7 @@ import { ThrowExeptionHandler } from '../util/throwExecptionHandler';
 
 @Injectable()
 export class ProjectService {
-    constructor(@InjectModel('Project') private projectModel: Model<Project>) { }
+    constructor(@InjectModel('Project') private projectModel: Model<Project>, private storyService: StoryService) { }
 
      async createProject(incomingProject: ProjectDTO): Promise<ProjectDTO> {
         const { name } = incomingProject;
@@ -68,9 +69,12 @@ export class ProjectService {
             if (existingProject) {
                 const result = await this.projectModel.deleteOne({ _id: id }).exec();
             }
+            await this.storyService.deleteStoriesByProjectId(id, existingProject);
+            await this.projectModel.deleteOne({_id: id}).exec();
         } catch (error) {
             ThrowExeptionHandler(error);
         }
 
     }
+
 }

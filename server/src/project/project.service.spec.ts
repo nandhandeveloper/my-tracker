@@ -8,6 +8,9 @@ import { Project } from './project.model';
 import { ProjectDTO } from './ProjectDTO';
 
 import { UnprocessableEntityException, NotFoundException, InternalServerErrorException } from "@nestjs/common";
+import { StoryService } from '../story/story.service';
+import { ProjectStatus } from '../constants/projectStatus';
+import { StorySchema } from '../story/story.model';
 
 
 const INVALID_PROJECT_ID = '5fb730ca227bd2dcf72acd49';
@@ -15,14 +18,15 @@ const ERROR_PROJECT_ID = 'dummyID';
 
 describe('ProjectService', () => {
   let projectService: ProjectService;
+  let storyService: StoryService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         rootMongooseTestModule(),
-        MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }]),
+        MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }, { name: 'Story', schema: StorySchema }]),
       ],
-      providers: [ProjectService],
+      providers: [ProjectService, StoryService],
     }).compile();
 
     projectService = module.get<ProjectService>(ProjectService);
@@ -45,12 +49,12 @@ describe('ProjectService', () => {
     const incomingList = [
       {
         name: "project1",
-        status: "ACTIVE",
+        status: ProjectStatus.ACTIVE,
         isChoosen: false,
       },
       {
         name: "project2",
-        status: "INACTIVE",
+        status: ProjectStatus.INACTIVE,
         isChoosen: true,
       }
     ];
@@ -68,7 +72,7 @@ describe('ProjectService', () => {
   it('CREATE PROJECT - should create a new Project if the project name doesnot exists in database', async () => {
     const incomingProject = {
       name: "project1",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       isChoosen: false,
     }
     const newProject: ProjectDTO = await projectService.createProject(incomingProject);
@@ -85,12 +89,12 @@ describe('ProjectService', () => {
 
     const existingProject = {
       name: "project1",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       isChoosen: false,
     };
     const incomingProject = {
       name: "project1",
-      status: "INACTIVE",
+      status: ProjectStatus.INACTIVE,
       isChoosen: true,
     };
 
@@ -104,7 +108,7 @@ describe('ProjectService', () => {
   it('FIND BY ID - should return the project details when Id is passed', async () => {
     const incomingProject = {
       name: "project1",
-      status: "INACTIVE",
+      status: ProjectStatus.INACTIVE,
       isChoosen: true,
     };
 
@@ -131,7 +135,7 @@ describe('ProjectService', () => {
   it('DELETE PROJECT - Should delete the record if present in the database', async () => {
     const incomingProject = {
       name: "project1",
-      status: "INACTIVE",
+      status: ProjectStatus.INACTIVE,
       isChoosen: true,
     };
 
@@ -167,7 +171,7 @@ describe('ProjectService', () => {
   it('UPDATE PROJECT -  should return updated objected', async () => {
     const existingProject = {
       name: "project1",
-      status: "INACTIVE",
+      status: ProjectStatus.INACTIVE,
       isChoosen: true,
     };
 
@@ -175,7 +179,7 @@ describe('ProjectService', () => {
     const incomingId = response._id;
     const incomingProject = {
       name: "project2",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       isChoosen: false,
     }
     const updatedProject: ProjectDTO = await projectService.updateProject(incomingId, incomingProject);
@@ -192,7 +196,7 @@ describe('ProjectService', () => {
     const invalidProjectId = INVALID_PROJECT_ID;
     const incomingProject = {
       name: "project1",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       isChoosen: false,
     }
     await expect(projectService.updateProject(invalidProjectId, incomingProject))
@@ -204,7 +208,7 @@ describe('ProjectService', () => {
     const errorId = ERROR_PROJECT_ID;
     const incomingProject = {
       name: "project1",
-      status: "ACTIVE",
+      status: ProjectStatus.ACTIVE,
       isChoosen: false,
     }
     await expect(projectService.updateProject(errorId, incomingProject))
