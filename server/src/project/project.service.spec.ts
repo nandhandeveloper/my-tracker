@@ -5,7 +5,7 @@ import { closeInMongodConnection, rootMongooseTestModule } from '../testConfig';
 import { ProjectService } from './project.service';
 import { ProjectSchema } from './project.model';
 import { Project } from './project.model';
-import { ProjectDTO } from './ProjectDTO';
+import { ProjectDto } from './dto/project.dto';
 
 import { UnprocessableEntityException, NotFoundException, InternalServerErrorException } from "@nestjs/common";
 import { StoryService } from '../story/story.service';
@@ -41,7 +41,7 @@ describe('ProjectService', () => {
   });
 
   it('FIND ALL PROJECTS - should return empty list of projects initially from the data base', async () => {
-    const result: ProjectDTO[] = await projectService.findAllProjects();
+    const result: ProjectDto[] = await projectService.findAllProjects();
     expect(result).toHaveLength(0);
   });
 
@@ -65,7 +65,7 @@ describe('ProjectService', () => {
       })
     );
 
-    const result: ProjectDTO[] = await projectService.findAllProjects();
+    const result: ProjectDto[] = await projectService.findAllProjects();
     expect(result).toHaveLength(2);
   });
   
@@ -75,7 +75,7 @@ describe('ProjectService', () => {
       status: ProjectStatus.ACTIVE,
       isChoosen: false,
     }
-    const newProject: ProjectDTO = await projectService.createProject(incomingProject);
+    const newProject: ProjectDto = await projectService.createProject(incomingProject);
     expect(newProject).toHaveProperty('_id');
     expect(newProject).toHaveProperty('name', incomingProject.name);
     expect(newProject).toHaveProperty('status', incomingProject.status);
@@ -112,7 +112,7 @@ describe('ProjectService', () => {
       isChoosen: true,
     };
 
-    const response: ProjectDTO = await projectService.createProject(incomingProject);
+    const response: ProjectDto = await projectService.createProject(incomingProject);
     const id: string = response._id;
 
     const existingProject: Project = await projectService.findProjectById(id);
@@ -139,15 +139,15 @@ describe('ProjectService', () => {
       isChoosen: true,
     };
 
-    const response: ProjectDTO = await projectService.createProject(incomingProject);
+    const response: ProjectDto = await projectService.createProject(incomingProject);
     const id: string = response._id;
 
-    const allProjects: ProjectDTO[] = await projectService.findAllProjects();
+    const allProjects: ProjectDto[] = await projectService.findAllProjects();
     expect(allProjects).toHaveLength(1);
 
     await projectService.deleteProject(id);
 
-    const projectList: ProjectDTO[] = await projectService.findAllProjects();
+    const projectList: ProjectDto[] = await projectService.findAllProjects();
     expect(projectList).toHaveLength(0);
 
   });
@@ -175,14 +175,14 @@ describe('ProjectService', () => {
       isChoosen: true,
     };
 
-    const response: ProjectDTO = await projectService.createProject(existingProject);
+    const response: ProjectDto = await projectService.createProject(existingProject);
     const incomingId = response._id;
     const incomingProject = {
       name: "project2",
       status: ProjectStatus.ACTIVE,
       isChoosen: false,
     }
-    const updatedProject: ProjectDTO = await projectService.updateProject(incomingId, incomingProject);
+    const updatedProject: ProjectDto = await projectService.updateProject(incomingId, incomingProject);
     expect(updatedProject).toHaveProperty('_id');
     expect(updatedProject).toHaveProperty('name', incomingProject.name);
     expect(updatedProject).toHaveProperty('status', incomingProject.status);

@@ -1,6 +1,6 @@
 import { StoryService } from './../story/story.service';
 import { Project } from './project.model';
-import { ProjectDTO } from './ProjectDTO';
+import { ProjectDto } from './dto/project.dto';
 
 import { Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,7 +12,7 @@ import { ThrowExeptionHandler } from '../util/throwExecptionHandler';
 export class ProjectService {
     constructor(@InjectModel('Project') private projectModel: Model<Project>, private storyService: StoryService) { }
 
-     async createProject(incomingProject: ProjectDTO): Promise<ProjectDTO> {
+     async createProject(incomingProject: ProjectDto): Promise<ProjectDto> {
         const { name } = incomingProject;
         try {
             const existingProject = await this.projectModel.findOne({ name }).exec();
@@ -26,7 +26,7 @@ export class ProjectService {
         }
     }
 
-    async findAllProjects(): Promise<ProjectDTO[]> {
+    async findAllProjects(): Promise<ProjectDto[]> {
         try {
             return await this.projectModel.find().exec();
         } catch (error) {
@@ -47,7 +47,7 @@ export class ProjectService {
         }
     }
 
-    async updateProject(id: string, updateProject: ProjectDTO): Promise<ProjectDTO> {
+    async updateProject(id: string, updateProject: ProjectDto): Promise<ProjectDto> {
         const { name,
             status,
             isChoosen,

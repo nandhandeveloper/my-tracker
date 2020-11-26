@@ -1,7 +1,7 @@
 import { StorySchema } from './../story/story.model';
 import { StoryService } from './../story/story.service';
 import { UnprocessableEntityException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
-import { ProjectDTO } from '../project/projectDTO';
+import { ProjectDto } from '../project/dto/project.dto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
@@ -44,17 +44,17 @@ describe('ProjectController', () => {
   });
 
   it('FIND ALL PROJECTS - should return all the projects from database', async () => {
-    const resposne: ProjectDTO[] = await projectController.findAllProject();
+    const resposne: ProjectDto[] = await projectController.findAllProject();
     expect(resposne).toHaveLength(0);
   });
 
   it('CREATE PROJECT - should create a project in database if doesnot exists', async () => {
-    const newProject: ProjectDTO = {
+    const newProject: ProjectDto = {
       name: 'project1',
       status: ProjectStatus.INACTIVE,
       isChoosen: false
     };
-    const resposne: ProjectDTO = await projectController.createProject(newProject);
+    const resposne: ProjectDto = await projectController.createProject(newProject);
     expect(resposne).toBeDefined();
     expect(resposne).toHaveProperty('_id');
     expect(resposne).toHaveProperty('name', newProject.name);
@@ -64,12 +64,12 @@ describe('ProjectController', () => {
 
 
   it('CREATE PROJECT - should throw 422 error when project name already exists in DB', async () => {
-    const existingProject: ProjectDTO = {
+    const existingProject: ProjectDto = {
       name: 'project1',
       status: ProjectStatus.ACTIVE,
       isChoosen: false
     };
-    const newProject: ProjectDTO = {
+    const newProject: ProjectDto = {
       name: 'project1',
       status: ProjectStatus.ACTIVE,
       isChoosen: true
@@ -91,10 +91,10 @@ describe('ProjectController', () => {
       isChoosen: true,
     };
 
-    const response: ProjectDTO = await projectController.createProject(incomingProject);
+    const response: ProjectDto = await projectController.createProject(incomingProject);
     const id: string = response._id;
 
-    const existingProject: ProjectDTO = await projectController.findProjectById(id);
+    const existingProject: ProjectDto = await projectController.findProjectById(id);
 
     expect(existingProject).toHaveProperty('_id');
     expect(existingProject).toHaveProperty('name', incomingProject.name);
@@ -118,15 +118,15 @@ describe('ProjectController', () => {
       isChoosen: true,
     };
 
-    const response: ProjectDTO = await projectController.createProject(incomingProject);
+    const response: ProjectDto = await projectController.createProject(incomingProject);
     const id: string = response._id;
 
-    const allProjects: ProjectDTO[] = await projectController.findAllProject();
+    const allProjects: ProjectDto[] = await projectController.findAllProject();
     expect(allProjects).toHaveLength(1);
 
     await projectController.deleteProject(id);
 
-    const projectList: ProjectDTO[] = await projectController.findAllProject();
+    const projectList: ProjectDto[] = await projectController.findAllProject();
     expect(projectList).toHaveLength(0);
 
   });
@@ -154,14 +154,14 @@ describe('ProjectController', () => {
       isChoosen: true,
     };
 
-    const response: ProjectDTO = await projectController.createProject(existingProject);
+    const response: ProjectDto = await projectController.createProject(existingProject);
     const incomingId = response._id;
     const incomingProject = {
       name: "project2",
       status: ProjectStatus.ACTIVE,
       isChoosen: false,
     }
-    const updatedProject: ProjectDTO = await projectController.updateProject(incomingId, incomingProject);
+    const updatedProject: ProjectDto = await projectController.updateProject(incomingId, incomingProject);
     expect(updatedProject).toHaveProperty('_id');
     expect(updatedProject).toHaveProperty('name', incomingProject.name);
     expect(updatedProject).toHaveProperty('status', incomingProject.status);

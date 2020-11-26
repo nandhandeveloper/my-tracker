@@ -2,6 +2,6 @@ export enum StoryTechnology {
     FRONTEND = 'Front end',
     BACKEND = 'Back end',
     DATABASE = 'Database',
-    VERSIONCONTROL = 'Version Control',
+    DEVOPS = 'DevOps',
     OTHER = 'Other'
 }

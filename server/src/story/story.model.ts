@@ -10,7 +10,7 @@ import { StoryType } from '../constants/stroyType';
 export const StorySchema = new Schema({
     content: { type: String, required: true },
     critical: { type: String,enum:[StoryCritical.HIGH,StoryCritical.LOW,StoryCritical.MEDIUM] , required: true },
-    technology: { type: String, enum: [StoryTechnology.FRONTEND,StoryTechnology.BACKEND,StoryTechnology.DATABASE,StoryTechnology.OTHER], required: true },
+    technology: { type: String, enum: [StoryTechnology.FRONTEND,StoryTechnology.BACKEND,StoryTechnology.DATABASE,StoryTechnology.DEVOPS,StoryTechnology.OTHER], required: true },
     type: { type: String, enum: [StoryType.FEATURE, StoryType.FIX, StoryType.STYLE, StoryType.CHORE, StoryType.TEST, StoryType.REFACTOR, StoryType.DOCS], required: true },
     status: { type: String, enum:[StoryStatus.INACTIVE, StoryStatus.ACTIVE, StoryStatus.COMPLETE], required: true },
     project: { type: Schema.Types.ObjectId, ref: 'Project', required: true }
