@@ -1,24 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react';
+import { NAV_ITEMS } from './common/constants';
+import Header from './components/Header/Header';
+import { Switch, Route, Redirect } from 'react-router-dom';
+
+import { ThemeProvider, createMuiTheme, Paper } from '@material-ui/core';
 
 type Props = {
     children?: React.ReactNode;
 };
 
+const Stories = React.lazy(() => import('./pages/Stories/Stories'));
+const Projects = React.lazy(() => import('./pages/Projects/Projects'));
+const TechStack = React.lazy(() => import('./pages/TechStack/TechStack'));
+
+const theme = createMuiTheme({
+    palette: {
+        // type: darkmode ? "dark" : "light",
+        // primary: amber,
+        // secondary: green
+    },
+    overrides: {
+        // MuiStepLabel: {
+        //   root: {
+        //     width: "100%"
+        //   }
+        // }
+    },
+});
+
 const App: React.FC<Props> = () => {
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-                    Learn React
-                </a>
-            </header>
-        </div>
+        <ThemeProvider theme={theme}>
+            <Paper elevation={0}>
+                <Header appName="Story Tracker" navItems={NAV_ITEMS}></Header>
+                <Suspense
+                    fallback={
+                        <div style={{ width: '100%' }}>
+                            <p style={{ textAlign: 'center' }}>Loading.....</p>
+                        </div>
+                    }
+                >
+                    <Switch>
+                        <Route path="/stories" exact component={Stories} />
+                        <Route path="/projects" exact component={Projects} />
+                        <Route path="/techstack" exact component={TechStack} />
+                        <Redirect to="/projects" />
+                    </Switch>
+                </Suspense>
+            </Paper>
+        </ThemeProvider>
     );
 };
 
