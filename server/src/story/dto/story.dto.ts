@@ -6,9 +6,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { StoryStatus } from '../../constants/stroyStatus';
 
 export class StoryDto {
-    @ApiProperty({type: String, description: 'Unique id of a story'})
+    @ApiProperty({type: String, description: 'Unique id of the story'})
     _id?: string;
-    @ApiProperty({type: String, description: 'Unique id of a story'})
+    @ApiProperty({type: String, description: 'description of the story'})
     content: string;
     @ApiProperty({type: ProjectDto, description: 'story related to this project'})
     project: ProjectDto;
