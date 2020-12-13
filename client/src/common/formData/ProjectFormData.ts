@@ -16,7 +16,6 @@ export const ProjectFormData = {
         },
         errors: [],
     },
-
     status: {
         name: 'status',
         value: '',

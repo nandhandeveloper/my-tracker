@@ -13,7 +13,7 @@ type Props = {
     projects: Project[];
 };
 
-const ProjectListBox: React.FC<Props> = ({ projects }) => {
+const ProjectListBox: React.FC<Props> = ({ projects }: Props) => {
     const classes = useStyles();
     const projectListMap: { [key: string]: Project[] } = {};
 

@@ -7,7 +7,7 @@ import DynamicFormField from '../DynamicFormGenerator/DynamicFormField';
 const useStyles = makeStyles((theme) => ({
     formLayout: {
         padding: theme.spacing(2),
-        marginTop: theme.spacing(4)
+        marginTop: theme.spacing(4),
     },
 }));
 
@@ -40,7 +40,7 @@ const AddProjectForm: React.FC<{}> = () => {
             status: { value: statusValue },
         } = projectForm;
 
-        console.log({ name: nameValue, status: statusValue });
+        console.log({ name: nameValue, status: statusValue, isChoosen: false });
     };
     return (
         <Paper className={classes.formLayout}>

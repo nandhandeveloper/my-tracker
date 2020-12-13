@@ -1,4 +1,3 @@
-
 export enum ProjectStatus {
     ACTIVE = 'Active',
     INACTIVE = 'InActive',
@@ -6,14 +5,13 @@ export enum ProjectStatus {
 }
 
 export interface AddProject {
-    name: string,
-    status: ProjectStatus,
+    name: string;
+    status: ProjectStatus;
+    isChoosen: boolean;
 }
 
 export interface Project extends AddProject {
-    _id: string,
-    isChoosen: boolean,
-    createdAt: Date,
-    updatedAt: Date,
+    _id: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
-
