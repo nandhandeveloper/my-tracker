@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavItem } from '../../models/NavItem';
+import { useHistory } from 'react-router-dom';
+
 import {
     AppBar,
     Typography,
@@ -13,13 +15,15 @@ import {
     Grid,
     ListItemIcon,
 } from '@material-ui/core';
+import clsx from 'clsx';
+
 import MenuIcon from '@material-ui/icons/Menu';
-import AssignmentIcon from '@material-ui/icons/Assignment';
 import CodeIcon from '@material-ui/icons/Code';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
-import clsx from 'clsx';
-import { useHistory } from 'react-router-dom';
-
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import { useDispatch } from 'react-redux';
+import { toggleAddModal } from '../../store/actions/actionCreators';
 
 const useStyles = makeStyles((theme) => ({
     drawer: {
@@ -76,13 +80,15 @@ type Props = {
 
 const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactElement => {
     const classes = useStyles();
-    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+
+    const dispatch = useDispatch();
     const history = useHistory();
     const [activeRoute, setActiveRoute] = useState<string>('/projects');
+    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
-    const onToggleDrawerHandler = () => {
-        setIsDrawerOpen(!isDrawerOpen);
-    };
+    useEffect(() => {
+        setActiveRoute(history.location.pathname);
+    }, [history.location.pathname]);
 
     const getListItemIcon = (name: string) => {
         switch (name) {
@@ -95,8 +101,15 @@ const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactEleme
         }
     };
 
+    const onToggleDrawerHandler = () => {
+        setIsDrawerOpen(!isDrawerOpen);
+    };
+
+    const onOpenAddModel = () => {
+        dispatch(toggleAddModal(activeRoute.slice(1)));
+    };
+
     const onNavItemSelectionHandler = (to: string) => {
-        setActiveRoute(to);
         history.push(to);
         onToggleDrawerHandler();
     };
@@ -114,7 +127,11 @@ const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactEleme
                         <Grid item xs={8} container justify="center" alignItems="center">
                             <Typography className={classes.projectName}>Project Name</Typography>
                         </Grid>
-                        <Grid item xs={2}></Grid>
+                        <Grid item xs={2} container justify="flex-end">
+                            <IconButton edge="end" color="inherit" aria-label="add" onClick={onOpenAddModel}>
+                                <AddCircleOutlineIcon />
+                            </IconButton>
+                        </Grid>
                     </Grid>
                 </Toolbar>
             </AppBar>

@@ -2,14 +2,18 @@
 export enum ProjectStatus {
     ACTIVE = 'Active',
     INACTIVE = 'InActive',
-    ONHOLD = 'Onhold',
+    ONHOLD = 'OnHold',
 }
 
-export interface Project {
-    _id: string,
+export interface AddProject {
     name: string,
     status: ProjectStatus,
+}
+
+export interface Project extends AddProject {
+    _id: string,
     isChoosen: boolean,
     createdAt: Date,
     updatedAt: Date,
 }
+

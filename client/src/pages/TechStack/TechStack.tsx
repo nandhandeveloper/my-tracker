@@ -1,4 +1,3 @@
-import { Grid } from '@material-ui/core';
 import React, { useState } from 'react';
 import { TECH_STACK_LIST } from '../../common/constants';
 import BasicLayout from '../../components/BasicLayout/BasicLayout';
@@ -9,8 +8,7 @@ import { Techstack } from '../../models/Techstack';
 
 const INITIAL_STATE: Techstack[] = TECH_STACK_LIST;
 
- const TechStack: React.FC<{}> = () => {
-    
+const TechStack: React.FC<{}> = () => {
     const [techstackList] = useState<Techstack[]>(INITIAL_STATE);
     const catMap: LooseObject = {};
 
@@ -30,16 +28,10 @@ const INITIAL_STATE: Techstack[] = TECH_STACK_LIST;
 
     return (
         <BasicLayout>
-            <Grid container>
-                <Grid item xs={false} md={2}></Grid>
-                <Grid item xs={12} md={8}>
-                    <PageTitle  title="Checklist for project development"/>
-                    {Object.keys(getTechStackList()).map((key: string) => {
-                        return <TechnologyBox key={key} title={key} content={catMap[key]} />;
-                    })}
-                </Grid>
-                <Grid item xs={false} md={8}></Grid>
-            </Grid>
+            <PageTitle title="Checklist for project development" />
+            {Object.keys(getTechStackList()).map((key: string) => {
+                return <TechnologyBox key={key} title={key} content={catMap[key]} />;
+            })}
         </BasicLayout>
     );
 };
