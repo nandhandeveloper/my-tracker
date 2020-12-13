@@ -1,5 +1,5 @@
 export enum StoryStatus {
-    ACTIVE = 'Active',
-    INACTIVE = 'InActive',
-    COMPLETE = 'Complete'
+  ACTIVE = 'Active',
+  INACTIVE = 'InActive',
+  COMPLETE = 'Complete',
 }
