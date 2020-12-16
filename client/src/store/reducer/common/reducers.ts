@@ -1,4 +1,4 @@
-import { TOGGLE_ADD_MODAL, CommonActionTypes } from '../../actions/actionTypes';
+import { CommonActionTypes, TOGGLE_ADD_MODAL } from '../../actions/common/actionTypes';
 
 interface AddModalStates {
     isProjectAddModalOpen: boolean;
@@ -6,7 +6,7 @@ interface AddModalStates {
 }
 
 const initialState: AddModalStates = {
-    isProjectAddModalOpen: true,
+    isProjectAddModalOpen: false,
     isStoriesAddModalOpen: false,
 };
 

@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-    projects: Project[];
+    projects?: Project[];
 };
 
 const ProjectListBox: React.FC<Props> = ({ projects }: Props) => {
@@ -18,7 +18,7 @@ const ProjectListBox: React.FC<Props> = ({ projects }: Props) => {
     const projectListMap: { [key: string]: Project[] } = {};
 
     const groupProjectList = () => {
-        projects.forEach((project) => {
+        projects?.forEach((project) => {
             if (projectListMap[project.status]) {
                 const newList = [...projectListMap[project.status]];
                 newList.push(project);
@@ -33,7 +33,7 @@ const ProjectListBox: React.FC<Props> = ({ projects }: Props) => {
     return (
         <Paper className={classes.projectBox} elevation={0}>
             {Object.keys(groupProjectList()).map((status) => (
-                <ProjectStatusBox key={status} status={status}  projects={projectListMap[status]} />
+                <ProjectStatusBox key={status} status={status} projects={projectListMap[status]} />
             ))}
         </Paper>
     );

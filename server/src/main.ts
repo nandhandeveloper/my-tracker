@@ -6,7 +6,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  
+  app.enableCors();
+
   const options = new DocumentBuilder()
     .setTitle('My Tracker Project')
     .setDescription('APIs for My tracker project,an ongoing project...')

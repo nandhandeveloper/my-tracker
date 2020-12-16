@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { Button, Paper, Box, makeStyles, Grid } from '@material-ui/core';
 import { ProjectFormData } from '../../common/formData/ProjectFormData';
 import { OnInputChangeHandler } from '../../common/DynamicForm/OnInputChangeHandler';
 import DynamicFormField from '../DynamicFormGenerator/DynamicFormField';
+
+import * as actions from '../../store/actions/actionCreators';
+import { AddProject } from '../../models/Project';
 
 const useStyles = makeStyles((theme) => ({
     formLayout: {
@@ -15,8 +20,12 @@ const initialState = ProjectFormData;
 const AddProjectForm: React.FC<{}> = () => {
     const classes = useStyles();
 
+    const dispatch = useDispatch();
+
     const [projectForm, setProjectForm] = useState<{ [key: string]: any }>(initialState);
     const [isProjectFormValid, setIsProjectFormValid] = useState<boolean>(false);
+
+    const onAddNewProject = (newProject: AddProject) => dispatch(actions.addNewProject(newProject));
 
     useEffect(() => {
         const isFormValid = Object.values(projectForm).every((field) => field.isValid);
@@ -39,8 +48,10 @@ const AddProjectForm: React.FC<{}> = () => {
             name: { value: nameValue },
             status: { value: statusValue },
         } = projectForm;
+        const newProject: AddProject = { name: nameValue, status: statusValue, isChoosen: false };
+        console.log(newProject);
+        onAddNewProject(newProject);
 
-        console.log({ name: nameValue, status: statusValue, isChoosen: false });
     };
     return (
         <Paper className={classes.formLayout}>

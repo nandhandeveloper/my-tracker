@@ -1,4 +1,4 @@
-import { CommonActionTypes, TOGGLE_ADD_MODAL } from './../actionTypes';
+import { CommonActionTypes, TOGGLE_ADD_MODAL } from './actionTypes';
 
 export const toggleAddModal = (routePath: string): CommonActionTypes => {
     return {
