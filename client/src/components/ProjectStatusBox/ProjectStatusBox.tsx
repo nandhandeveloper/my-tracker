@@ -1,15 +1,23 @@
 import React from 'react';
 import { Project } from '../../models/Project';
 import ProjectBox from '../ProjectBox/ProjectBox';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+    statusBox: {
+        marginBottom: theme.spacing(2),
+    },
+}));
+
 
 type Props = {
     status: string;
     projects: Project[];
 };
 const ProjectStatusBox: React.FC<Props> = ({ status, projects }: Props) => {
+    const classes = useStyles();
     return (
-        <Grid container>
+        <Grid container className={classes.statusBox}>
             <Grid xs={12} item>
                 <Typography variant="h5">{status}</Typography>
             </Grid>

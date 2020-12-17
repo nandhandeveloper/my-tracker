@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-// import { makeStyles } from '@material-ui/core';
+
 import { useHistory } from 'react-router-dom';
 
 import BasicLayout from '../../components/BasicLayout/BasicLayout';
@@ -12,6 +12,8 @@ import AddProjectForm from '../../components/AddProjectForm/AddProjectForm';
 import * as actions from '../../store/actions/actionCreators';
 import { SPINNERCOLOR } from '../../components/Spinner/Spinner';
 import FullScreenSpinner from '../../components/FullScreenSpinner/FullScreenSpinner';
+import NoRecordsFound from '../../components/NoRecordsFound/NoRecordsFound';
+import ProjectActionsModal from '../../components/ProjectActionsModal/ProjectActionsModal';
 
 const Projects: React.FC<Record<string, never>> = () => {
     const dispatch = useDispatch();
@@ -19,17 +21,17 @@ const Projects: React.FC<Record<string, never>> = () => {
 
     const {
         commonRed: { isProjectAddModalOpen: addModalState },
-        projectsRed: { projects, isLoading },
+        projectsRed: { projects, isLoading, selectedProject, isActionsModalOpen },
     } = useSelector((state: RootState) => state);
-
     const pageName = history.location.pathname.slice(1);
 
     const getAllProjects = useCallback(() => dispatch(actions.getAllProjects()), [dispatch]);
-    const toggleAddModal = () => dispatch(actions.toggleAddModal(pageName));
-
+    const toggleAddProjectModal = () => dispatch(actions.toggleAddModal(pageName));
+    const toggleActionsModal = () => dispatch(actions.onActionsModalToggle());
     useEffect(() => {
         getAllProjects();
     }, [getAllProjects]);
+
     return (
         <BasicLayout>
             <PageTitle title="Projects" />
@@ -37,12 +39,27 @@ const Projects: React.FC<Record<string, never>> = () => {
             {isLoading ? (
                 <FullScreenSpinner color={SPINNERCOLOR.SECONDARY} text="Fetching products" />
             ) : (
-                <ProjectListBox projects={projects}></ProjectListBox>
+                projects &&
+                (projects?.length > 0 ? (
+                    <ProjectListBox projects={projects} />
+                ) : (
+                    <NoRecordsFound text="No Projects are found" />
+                ))
             )}
 
-            <AddModal title="New Project" isOpen={addModalState} onToggleModal={() => toggleAddModal()}>
+            <AddModal title="New Project" isOpen={addModalState} onToggleModal={() => toggleAddProjectModal()}>
                 <AddProjectForm />
             </AddModal>
+            <ProjectActionsModal
+                isOpen={isActionsModalOpen}
+                onCloseModal={() => toggleActionsModal()}
+                project={selectedProject}
+                onEditHandler={() => {
+                    toggleActionsModal();
+                    toggleAddProjectModal();
+                }}
+                onDeleteHandler={() => toggleActionsModal()}
+            />
         </BasicLayout>
     );
 };

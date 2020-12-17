@@ -1,9 +1,6 @@
 import { Paper, Typography, makeStyles } from '@material-ui/core';
 import React from 'react';
 
-type Props = {
-    title: string
-};
 
 const useStyles = makeStyles((theme) => ({
     pageTitle: {
@@ -16,7 +13,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const PageTitle: React.FC<Props> = ({title}) => {
+type Props = {
+    title: string
+};
+
+
+const PageTitle: React.FC<Props> = ({title}: Props) => {
     const classes = useStyles();
     return (
         <Paper elevation={0}>

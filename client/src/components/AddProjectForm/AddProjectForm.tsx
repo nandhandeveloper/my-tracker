@@ -48,10 +48,13 @@ const AddProjectForm: React.FC<{}> = () => {
             name: { value: nameValue },
             status: { value: statusValue },
         } = projectForm;
-        const newProject: AddProject = { name: nameValue, status: statusValue, isChoosen: false };
+        const formatedName = nameValue
+            .split(' ')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())
+            .join(' ');
+        const newProject: AddProject = { name: formatedName, status: statusValue, isChoosen: false };
         console.log(newProject);
         onAddNewProject(newProject);
-
     };
     return (
         <Paper className={classes.formLayout}>
