@@ -5,4 +5,6 @@ export {
     onProjectSelected,
     onProjectSelectedForTracking,
     onActionsModalToggle,
+    onDeleteConfirmModalToggle,
+    onDeleteProject,
 } from './projects/actions';

@@ -14,6 +14,7 @@ import { SPINNERCOLOR } from '../../components/Spinner/Spinner';
 import FullScreenSpinner from '../../components/FullScreenSpinner/FullScreenSpinner';
 import NoRecordsFound from '../../components/NoRecordsFound/NoRecordsFound';
 import ProjectActionsModal from '../../components/ProjectActionsModal/ProjectActionsModal';
+import DeleteConfirmModal from '../../components/DeleteConfirmModal/DeleteConfirmModal';
 
 const Projects: React.FC<Record<string, never>> = () => {
     const dispatch = useDispatch();
@@ -21,13 +22,16 @@ const Projects: React.FC<Record<string, never>> = () => {
 
     const {
         commonRed: { isProjectAddModalOpen: addModalState },
-        projectsRed: { projects, isLoading, selectedProject, isActionsModalOpen },
+        projectsRed: { projects, isLoading, selectedProject, isActionsModalOpen, isDeleteConfirmModalOpen },
     } = useSelector((state: RootState) => state);
+
     const pageName = history.location.pathname.slice(1);
 
     const getAllProjects = useCallback(() => dispatch(actions.getAllProjects()), [dispatch]);
     const toggleAddProjectModal = () => dispatch(actions.toggleAddModal(pageName));
     const toggleActionsModal = () => dispatch(actions.onActionsModalToggle());
+    const toggleProjectDeleteConfirmModal = () => dispatch(actions.onDeleteConfirmModalToggle());
+
     useEffect(() => {
         getAllProjects();
     }, [getAllProjects]);
@@ -58,7 +62,15 @@ const Projects: React.FC<Record<string, never>> = () => {
                     toggleActionsModal();
                     toggleAddProjectModal();
                 }}
-                onDeleteHandler={() => toggleActionsModal()}
+                onDeleteHandler={() => {
+                    toggleActionsModal();
+                    toggleProjectDeleteConfirmModal();
+                }}
+            />
+            <DeleteConfirmModal
+                isOpen={isDeleteConfirmModalOpen}
+                type="project"
+                onCloseModal={() => toggleProjectDeleteConfirmModal()}
             />
         </BasicLayout>
     );

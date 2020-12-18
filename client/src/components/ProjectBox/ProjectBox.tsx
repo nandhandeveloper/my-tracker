@@ -8,6 +8,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import green from '@material-ui/core/colors/green';
 import * as actions from '../../store/actions/actionCreators';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
     projectBox: {
@@ -15,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
     },
     isSelected: {
         color: green[500],
+    },
+    isNotSelected: {
+        color: 'transparent',
     },
 }));
 
@@ -38,7 +42,12 @@ const ProjectBox: React.FC<Props> = ({ project }: Props) => {
                 <CardHeader
                     avatar={
                         <IconButton aria-label="settings">
-                            {isChoosen && <CheckCircleIcon className={classes.isSelected} />}
+                            <CheckCircleIcon
+                                className={clsx({
+                                    [classes.isSelected]: isChoosen,
+                                    [classes.isNotSelected]: !isChoosen,
+                                })}
+                            />
                         </IconButton>
                     }
                     action={

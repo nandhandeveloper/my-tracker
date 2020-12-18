@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const initialState = ProjectFormData;
-const AddProjectForm: React.FC<{}> = () => {
+const AddProjectForm: React.FC<Record<string, never>> = () => {
     const classes = useStyles();
 
     const dispatch = useDispatch();
@@ -49,6 +49,7 @@ const AddProjectForm: React.FC<{}> = () => {
             status: { value: statusValue },
         } = projectForm;
         const formatedName = nameValue
+            .trim()
             .split(' ')
             .map((word: string) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())
             .join(' ');

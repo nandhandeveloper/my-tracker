@@ -96,7 +96,7 @@ const ProjectActionsModal: React.FC<Props> = ({
                 <DialogContentText id="alert-dialog-description">
                     Please choose any of the following actions to apply on the project
                 </DialogContentText>
-                <DialogContentText id="alert-dialog-description">
+                <DialogContentText id="alert-dialog-project-name">
                     <Typography variant="h6" align="center">
                         <strong>{project?.name}</strong>
                     </Typography>

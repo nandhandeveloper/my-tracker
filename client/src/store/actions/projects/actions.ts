@@ -5,6 +5,11 @@ import {
     GET_ALL_PROJECTS,
     ON_PROJECT_SELECTED,
     ON_PROJECT_ACTIONS_MODAL_TOGGLE,
+    ON_PROJECT_DELETE_CONFIRM_MODAL_TOGGLE,
+    ON_DELETE_SPINNER,
+    ON_DELETE_ERROR,
+    ON_DELETE_SUCCESS,
+    REFRESH_PROJECTS_AFTER_DELETE,
 } from './actionTypes';
 
 import { Action } from 'redux';
@@ -70,6 +75,51 @@ export const onActionsModalToggle = (): ActionType => {
     };
 };
 
+export const onDeleteConfirmModalToggle = (): ActionType => {
+    return {
+        type: ON_PROJECT_DELETE_CONFIRM_MODAL_TOGGLE,
+        payload: {
+            data: null,
+        },
+    };
+};
+
+export const deleteProjectError = (isError: boolean): ActionType => {
+    return {
+        type: ON_DELETE_ERROR,
+        payload: {
+            data: isError,
+        },
+    };
+};
+
+export const deleteProjectSpinner = (isLoading: boolean): ActionType => {
+    return {
+        type: ON_DELETE_SPINNER,
+        payload: {
+            data: isLoading,
+        },
+    };
+};
+
+export const deleteProjectSuccessToggle = (): ActionType => {
+    return {
+        type: ON_DELETE_SUCCESS,
+        payload: {
+            data: true,
+        },
+    };
+};
+
+export const onRefreshProjectsAfterDelete = (project: Project): ActionType => {
+    return {
+        type: REFRESH_PROJECTS_AFTER_DELETE,
+        payload: {
+            data: project,
+        },
+    };
+};
+
 export const getAllProjects = (): ThunkAction<void, RootState, unknown, Action<string>> => {
     return async (dispatch) => {
         try {
@@ -119,6 +169,25 @@ export const onProjectSelectedForTracking = (
             dispatch(projectError(true));
         } finally {
             dispatch(projetSpinner(false));
+        }
+    };
+};
+
+export const onDeleteProject = (project: Project): ThunkAction<void, RootState, unknown, Action<string>> => {
+    // TODO from backend
+    return async (dispatch) => {
+        try {
+            dispatch(deleteProjectError(false));
+            dispatch(deleteProjectSpinner(true));
+            await axios.delete(`http://localhost:8080/api/projects/${project._id}`);
+            dispatch(onRefreshProjectsAfterDelete(project));
+            dispatch(onDeleteConfirmModalToggle());
+            dispatch(deleteProjectSuccessToggle());
+        } catch (error) {
+            console.log(error);
+            dispatch(deleteProjectError(true));
+        } finally {
+            dispatch(deleteProjectSpinner(false));
         }
     };
 };
