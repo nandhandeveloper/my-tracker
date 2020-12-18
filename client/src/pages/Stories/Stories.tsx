@@ -7,20 +7,34 @@ import { RootState } from '../../store';
 import { toggleAddModal } from '../../store/actions/actionCreators';
 import { useHistory } from 'react-router-dom';
 import AddStoryForm from '../../components/AddStoryForm/AddStoryForm';
+import StroyStatusBox from '../../components/StroyStatusBox/StroyStatusBox';
+import StoryList from '../../components/StoryList/StoryList';
+import FullScreenSpinner from '../../components/FullScreenSpinner/FullScreenSpinner';
+import { SPINNERCOLOR } from '../../components/Spinner/Spinner';
 
 const Stories: React.FC<{}> = () => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const addModalState = useSelector((state: RootState) => state.commonRed.isStoriesAddModalOpen);
+    const {
+        commonRed: { isStoriesAddModalOpen },
+        storiesRed: { stories, isLoading },
+    } = useSelector((state: RootState) => state);
     const pageName = history.location.pathname.slice(1);
 
     return (
         <BasicLayout>
             <PageTitle title="Stories" />
+            <StroyStatusBox />
+
+            {isLoading ? (
+                <FullScreenSpinner color={SPINNERCOLOR.SECONDARY} text="Fetching Stories" />
+            ) : (
+                <StoryList stories={stories || []} />
+            )}
             <AddModal
                 title="New Story"
-                isOpen={addModalState}
+                isOpen={isStoriesAddModalOpen}
                 onToggleModal={() => dispatch(toggleAddModal(pageName))}
             >
                 <AddStoryForm />

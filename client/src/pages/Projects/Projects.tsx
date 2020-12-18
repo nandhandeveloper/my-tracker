@@ -41,7 +41,7 @@ const Projects: React.FC<Record<string, never>> = () => {
             <PageTitle title="Projects" />
 
             {isLoading ? (
-                <FullScreenSpinner color={SPINNERCOLOR.SECONDARY} text="Fetching products" />
+                <FullScreenSpinner color={SPINNERCOLOR.SECONDARY} text="Fetching Products" />
             ) : (
                 projects &&
                 (projects?.length > 0 ? (

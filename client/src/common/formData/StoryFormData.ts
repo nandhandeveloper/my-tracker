@@ -1,21 +1,5 @@
 import { StoryCritical, StoryTechnology, StoryType, StoryStatus } from './../../models/Story';
 export const StoryFormData = {
-    name: {
-        name: 'name',
-        value: '',
-        type: 'text',
-        label: 'Story Name',
-        isValid: false,
-        isTouched: false,
-        multiline: false,
-        validations: {
-            required: {
-                value: true,
-                error: 'This is a required field',
-            },
-        },
-        errors: [],
-    },
     content: {
         name: 'content',
         value: '',

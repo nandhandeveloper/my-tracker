@@ -8,6 +8,10 @@ import {
     ON_DELETE_ERROR,
     ON_DELETE_SPINNER,
     REFRESH_PROJECTS_AFTER_DELETE,
+    ON_REFRESH_PROJECTS_AFTER_MODIFY,
+    MODIFIED_PROJECT_SPINNER,
+    MODIFIED_PROJECT_ERROR,
+    MODIFY_PROJECT_SUCCESS_TOGGLE,
 } from './../../actions/projects/actionTypes';
 import { Project } from './../../../models/Project';
 import { GET_ALL_PROJECTS, ProjectsActionTypes } from '../../actions/projects/actionTypes';
@@ -22,6 +26,9 @@ interface ProjectStates {
     isDeleteSuccessful: boolean;
     isDeleteError: boolean;
     isDeleteSpinnerLoading: boolean;
+    isModifiedSpinnerLoading: boolean;
+    isModifiedprojectError: boolean;
+    isModifiedprojectSuccess: boolean;
 }
 
 const initialState: ProjectStates = {
@@ -34,6 +41,9 @@ const initialState: ProjectStates = {
     isDeleteSuccessful: false,
     isDeleteError: false,
     isDeleteSpinnerLoading: false,
+    isModifiedSpinnerLoading: false,
+    isModifiedprojectError: false,
+    isModifiedprojectSuccess: false,
 };
 
 const getAllProjects = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
@@ -134,6 +144,56 @@ const onRefreshProjectsAfterDelete = (state: ProjectStates, action: ProjectsActi
     };
 };
 
+const onRefreshProjectsAfterModify = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
+    const {
+        payload: { data: modifiedProject },
+    } = action;
+    const { projects } = state;
+
+    return {
+        ...state,
+        projects: projects?.map((project: Project) => {
+            if (project._id === modifiedProject._id) {
+                return modifiedProject;
+            } else {
+                return project;
+            }
+        }),
+        selectedProject: undefined,
+    };
+};
+const modifiedProjectSpinner = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
+    const {
+        payload: { data },
+    } = action;
+
+    return {
+        ...state,
+        isModifiedSpinnerLoading: data,
+    };
+};
+const modifiedProjectError = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
+    const {
+        payload: { data },
+    } = action;
+
+    return {
+        ...state,
+        isModifiedprojectError: data,
+    };
+};
+
+const modifiedProjectSuccessToggle = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
+    const {
+        payload: { data },
+    } = action;
+
+    return {
+        ...state,
+        isModifiedprojectSuccess: data,
+    };
+}
+
 const reducer = (state: ProjectStates = initialState, action: ProjectsActionTypes): ProjectStates => {
     switch (action.type) {
         case GET_ALL_PROJECTS:
@@ -156,6 +216,14 @@ const reducer = (state: ProjectStates = initialState, action: ProjectsActionType
             return onDeleteSpinner(state, action);
         case REFRESH_PROJECTS_AFTER_DELETE:
             return onRefreshProjectsAfterDelete(state, action);
+        case ON_REFRESH_PROJECTS_AFTER_MODIFY:
+            return onRefreshProjectsAfterModify(state, action);
+        case MODIFIED_PROJECT_SPINNER:
+            return modifiedProjectSpinner(state, action);
+        case MODIFIED_PROJECT_ERROR:
+            return modifiedProjectError(state, action);
+        case MODIFY_PROJECT_SUCCESS_TOGGLE:
+            return modifiedProjectSuccessToggle(state, action);
 
         default:
             return state;

@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
 type Props = {
     status: string;
     projects: Project[];
@@ -21,9 +20,11 @@ const ProjectStatusBox: React.FC<Props> = ({ status, projects }: Props) => {
             <Grid xs={12} item>
                 <Typography variant="h5">{status}</Typography>
             </Grid>
-            {projects.map((project: Project, index: number) => (
-                <ProjectBox key={index} project={project} />
-            ))}
+            <Grid xs={12} item>
+                {projects.map((project: Project, index: number) => (
+                    <ProjectBox key={index} project={project} />
+                ))}
+            </Grid>
         </Grid>
     );
 };

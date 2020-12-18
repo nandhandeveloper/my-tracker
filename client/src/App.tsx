@@ -44,7 +44,7 @@ const App: React.FC<Props> = () => {
                         <Route path="/stories" exact component={Stories} />
                         <Route path="/projects" exact component={Projects} />
                         <Route path="/techstack" exact component={TechStack} />
-                        <Redirect to="/projects" />
+                        <Redirect to="/stories" />
                     </Switch>
                 </Suspense>
             </Paper>

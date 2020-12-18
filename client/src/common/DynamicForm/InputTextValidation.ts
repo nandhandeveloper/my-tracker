@@ -1,10 +1,10 @@
-export const InputTextValidations = (validations: {[key: string]: any}, inputValue: string) => {
+export const InputTextValidations = (validations: { [key: string]: any }, inputValue: string) => {
     const errors = [];
-    for (let validation in validations) {
+    for (const validation in validations) {
         const { value, error } = validations[validation];
         switch (validation) {
             case 'required':
-                if (value && (!inputValue)) {
+                if (value && !inputValue) {
                     errors.push(error);
                 }
                 break;
@@ -31,5 +31,4 @@ export const InputTextValidations = (validations: {[key: string]: any}, inputVal
         }
     }
     return errors;
-}
-
+};

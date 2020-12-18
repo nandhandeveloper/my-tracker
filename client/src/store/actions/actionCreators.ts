@@ -7,4 +7,5 @@ export {
     onActionsModalToggle,
     onDeleteConfirmModalToggle,
     onDeleteProject,
+    onModifyProject,
 } from './projects/actions';

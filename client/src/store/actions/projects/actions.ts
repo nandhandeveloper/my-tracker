@@ -1,4 +1,3 @@
-import { ActionType } from './../../../models/ActionsModal';
 import {
     SPINNER_IN_PROJECT,
     ADD_NEW_PROJECT,
@@ -10,6 +9,12 @@ import {
     ON_DELETE_ERROR,
     ON_DELETE_SUCCESS,
     REFRESH_PROJECTS_AFTER_DELETE,
+    ON_REFRESH_PROJECTS_AFTER_MODIFY,
+    MODIFIED_PROJECT_ERROR,
+    MODIFY_PROJECT_SUCCESS_TOGGLE,
+    MODIFIED_PROJECT_SPINNER,
+    ERROR_IN_PROJECT,
+    ProjectsActionTypes,
 } from './actionTypes';
 
 import { Action } from 'redux';
@@ -17,7 +22,6 @@ import { ThunkAction } from 'redux-thunk';
 
 import axios from 'axios';
 import { RootState } from '../../index';
-import { ERROR_IN_PROJECT, ProjectsActionTypes } from './actionTypes';
 import { AddProject, Project } from '../../../models/Project';
 import { toggleAddModal } from '../actionCreators';
 
@@ -57,7 +61,7 @@ const getProjectsDispatch = (data: Project[]) => {
     };
 };
 
-export const onProjectSelected = (projectSelected: Project | undefined): ActionType => {
+export const onProjectSelected = (projectSelected: Project | undefined): ProjectsActionTypes => {
     return {
         type: ON_PROJECT_SELECTED,
         payload: {
@@ -66,7 +70,7 @@ export const onProjectSelected = (projectSelected: Project | undefined): ActionT
     };
 };
 
-export const onActionsModalToggle = (): ActionType => {
+export const onActionsModalToggle = (): ProjectsActionTypes => {
     return {
         type: ON_PROJECT_ACTIONS_MODAL_TOGGLE,
         payload: {
@@ -75,7 +79,7 @@ export const onActionsModalToggle = (): ActionType => {
     };
 };
 
-export const onDeleteConfirmModalToggle = (): ActionType => {
+export const onDeleteConfirmModalToggle = (): ProjectsActionTypes => {
     return {
         type: ON_PROJECT_DELETE_CONFIRM_MODAL_TOGGLE,
         payload: {
@@ -84,7 +88,7 @@ export const onDeleteConfirmModalToggle = (): ActionType => {
     };
 };
 
-export const deleteProjectError = (isError: boolean): ActionType => {
+export const deleteProjectError = (isError: boolean): ProjectsActionTypes => {
     return {
         type: ON_DELETE_ERROR,
         payload: {
@@ -93,7 +97,7 @@ export const deleteProjectError = (isError: boolean): ActionType => {
     };
 };
 
-export const deleteProjectSpinner = (isLoading: boolean): ActionType => {
+export const deleteProjectSpinner = (isLoading: boolean): ProjectsActionTypes => {
     return {
         type: ON_DELETE_SPINNER,
         payload: {
@@ -102,7 +106,7 @@ export const deleteProjectSpinner = (isLoading: boolean): ActionType => {
     };
 };
 
-export const deleteProjectSuccessToggle = (): ActionType => {
+export const deleteProjectSuccessToggle = (): ProjectsActionTypes => {
     return {
         type: ON_DELETE_SUCCESS,
         payload: {
@@ -111,11 +115,47 @@ export const deleteProjectSuccessToggle = (): ActionType => {
     };
 };
 
-export const onRefreshProjectsAfterDelete = (project: Project): ActionType => {
+export const onRefreshProjectsAfterDelete = (project: Project): ProjectsActionTypes => {
     return {
         type: REFRESH_PROJECTS_AFTER_DELETE,
         payload: {
             data: project,
+        },
+    };
+};
+
+export const modifiedProjectError = (isError: boolean): ProjectsActionTypes => {
+    return {
+        type: MODIFIED_PROJECT_ERROR,
+        payload: {
+            data: isError,
+        },
+    };
+};
+
+export const modifiedProjectSpinner = (isLoading: boolean): ProjectsActionTypes => {
+    return {
+        type: MODIFIED_PROJECT_SPINNER,
+        payload: {
+            data: isLoading,
+        },
+    };
+};
+
+export const onRefreshProjectsAfterModify = (modifiedProject: boolean): ProjectsActionTypes => {
+    return {
+        type: ON_REFRESH_PROJECTS_AFTER_MODIFY,
+        payload: {
+            data: modifiedProject,
+        },
+    };
+};
+
+export const modifyProjectSuccessToggle = (): ProjectsActionTypes => {
+    return {
+        type: MODIFY_PROJECT_SUCCESS_TOGGLE,
+        payload: {
+            data: null,
         },
     };
 };
@@ -188,6 +228,28 @@ export const onDeleteProject = (project: Project): ThunkAction<void, RootState, 
             dispatch(deleteProjectError(true));
         } finally {
             dispatch(deleteProjectSpinner(false));
+        }
+    };
+};
+
+export const onModifyProject = (
+    modifiedProject: AddProject,
+    id: string,
+): ThunkAction<void, RootState, unknown, Action<string>> => {
+    // TODO from backend
+    return async (dispatch) => {
+        try {
+            dispatch(modifiedProjectError(false));
+            dispatch(modifiedProjectSpinner(true));
+            const response = await axios.put(`http://localhost:8080/api/projects/${id}`, modifiedProject);
+            dispatch(onRefreshProjectsAfterModify(response.data));
+            dispatch(toggleAddModal('projects'));
+            dispatch(modifyProjectSuccessToggle());
+        } catch (error) {
+            console.log(error);
+            dispatch(modifiedProjectError(true));
+        } finally {
+            dispatch(modifiedProjectSpinner(false));
         }
     };
 };
