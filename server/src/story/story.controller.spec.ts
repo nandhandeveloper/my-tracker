@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Project } from './../project/project.model';
 import { Test, TestingModule } from '@nestjs/testing';
 import { StoryController } from './story.controller';
-import { MongooseModule } from '@nestjs/mongoose'
+import { MongooseModule } from '@nestjs/mongoose';
 import { closeInMongodConnection, rootMongooseTestModule } from '../testConfig';
 import { ProjectSchema } from '../project/project.model';
 import { StorySchema } from './story.model';
@@ -16,7 +16,6 @@ import { StoryStatus } from '../constants/stroyStatus';
 import { StoryCritical } from '../constants/stroyCritical';
 import { StoryType } from '../constants/stroyType';
 
-
 const INVALID_ID = '5fb730ca227bd2dcf72acd49';
 const ERROR_PROJECT_ID = 'dummyiddummyiddummyid432';
 
@@ -26,26 +25,29 @@ describe('StoryController', () => {
   let projectService: ProjectService;
   let existingProject: ProjectDto;
   let existingStory: StoryDto;
-  let newStory: StoryDto
+  let newStory: StoryDto;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         rootMongooseTestModule(),
-        MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }, { name: 'Story', schema: StorySchema }]),
+        MongooseModule.forFeature([
+          { name: 'Project', schema: ProjectSchema },
+          { name: 'Story', schema: StorySchema },
+        ]),
       ],
       controllers: [StoryController],
-      providers: [StoryService, ProjectService]
+      providers: [StoryService, ProjectService],
     }).compile();
 
-    storyController = module.get<StoryController>(StoryController)
+    storyController = module.get<StoryController>(StoryController);
     storyService = module.get<StoryService>(StoryService);
     projectService = module.get<ProjectService>(ProjectService);
 
     const newProject: ProjectDto = {
       name: 'project1',
       status: ProjectStatus.ACTIVE,
-      isChoosen: true
+      isChoosen: true,
     };
     existingProject = await projectService.createProject(newProject);
 
@@ -58,7 +60,6 @@ describe('StoryController', () => {
       type: StoryType.FEATURE,
     };
     existingStory = await storyService.createStory(newStory);
-
   });
 
   afterEach(async () => {
@@ -80,16 +81,17 @@ describe('StoryController', () => {
     expect(await storyService.findAllStories()).toHaveLength(0);
   });
 
-
   it('DELETE STORY - should throw 404 not found error when given story Id is not present in the database', async () => {
     const storyId = INVALID_ID;
-    await expect(storyController.deleteStory(storyId))
-      .rejects
-      .toThrow(new NotFoundException(`No Story found with the id ${storyId}`));
+    await expect(storyController.deleteStory(storyId)).rejects.toThrow(
+      new NotFoundException(`No Story found with the id ${storyId}`),
+    );
   });
 
   it('FIND ALL STORIES BY PROJECT -  should return a stories based on the project selected', async () => {
-    expect(await storyService.findStoriesByProjectId(existingProject._id)).toHaveLength(1);
+    expect(
+      await storyService.findStoriesByProjectId(existingProject._id),
+    ).toHaveLength(1);
     const storiesList = [
       {
         content: 'some description about the story',
@@ -106,14 +108,16 @@ describe('StoryController', () => {
         critical: StoryCritical.MEDIUM,
         project: existingProject,
         type: StoryType.FEATURE,
-      }
+      },
     ];
     await Promise.all(
       storiesList.map(async (story: StoryDto) => {
         await storyService.createStory(story);
-      })
+      }),
     );
-    expect(await storyController.findStoriesByProjectId(existingProject._id)).toHaveLength(3);
+    expect(
+      await storyController.findStoriesByProjectId(existingProject._id),
+    ).toHaveLength(3);
   });
 
   it('UPDATE STORY -  should update the exiting story', async () => {
@@ -123,7 +127,10 @@ describe('StoryController', () => {
     existingStory.status = StoryStatus.COMPLETE;
     existingStory.project = existingProject;
     existingStory.content = 'edited content for description';
-    const updatedStory: StoryDto = await storyService.updateStory(existingStory._id, existingStory);
+    const updatedStory: StoryDto = await storyService.updateStory(
+      existingStory._id,
+      existingStory,
+    );
     expect(updatedStory).toHaveProperty('_id');
     expect(updatedStory).toHaveProperty('content', existingStory.content);
     expect(updatedStory).toHaveProperty('technology', existingStory.technology);
@@ -138,16 +145,20 @@ describe('StoryController', () => {
 
   it('UPDATE STORY -  should throw 404 error when project with the given id is not found', async () => {
     existingStory.project._id = INVALID_ID;
-    await expect(storyController.updateStory(existingStory._id, existingStory))
-      .rejects
-      .toThrow(new NotFoundException(`No Project found with the id ${INVALID_ID}`));
+    await expect(
+      storyController.updateStory(existingStory._id, existingStory),
+    ).rejects.toThrow(
+      new NotFoundException(`No Project found with the id ${INVALID_ID}`),
+    );
   });
 
   it('UPDATE STORY -  should throw 404 error when story with the given id is not found', async () => {
     existingStory._id = INVALID_ID;
-    await expect(storyController.updateStory(existingStory._id, existingStory))
-      .rejects
-      .toThrow(new NotFoundException(`No Story found with the id ${INVALID_ID}`));
+    await expect(
+      storyController.updateStory(existingStory._id, existingStory),
+    ).rejects.toThrow(
+      new NotFoundException(`No Story found with the id ${INVALID_ID}`),
+    );
   });
 
   it('CREATE STORY - should return all the stories from the database', async () => {
@@ -165,9 +176,8 @@ describe('StoryController', () => {
 
   it('CREATE STORY - should throw NOT FOUND error when project Id is not found', async () => {
     existingStory.project._id = INVALID_ID;
-    await expect(storyController.createStory(existingStory))
-      .rejects
-      .toThrow(new NotFoundException(`No Project found with the id ${INVALID_ID}`));
+    await expect(storyController.createStory(existingStory)).rejects.toThrow(
+      new NotFoundException(`No Project found with the id ${INVALID_ID}`),
+    );
   });
-
 });
