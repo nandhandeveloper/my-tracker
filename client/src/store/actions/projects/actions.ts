@@ -15,6 +15,7 @@ import {
     MODIFIED_PROJECT_SPINNER,
     ERROR_IN_PROJECT,
     ProjectsActionTypes,
+    ON_PROJECT_SELECTED_FOR_TRACKING,
 } from './actionTypes';
 
 import { Action } from 'redux';
@@ -160,6 +161,15 @@ export const modifyProjectSuccessToggle = (): ProjectsActionTypes => {
     };
 };
 
+export const onProjectSelectedForTrackingDispatch = (project: Project): ProjectsActionTypes => {
+    return {
+        type: ON_PROJECT_SELECTED_FOR_TRACKING,
+        payload: {
+            data: project,
+        },
+    };
+};
+
 export const getAllProjects = (): ThunkAction<void, RootState, unknown, Action<string>> => {
     return async (dispatch) => {
         try {
@@ -202,7 +212,7 @@ export const onProjectSelectedForTracking = (
             dispatch(projectError(false));
             dispatch(projetSpinner(true));
             const response = await axios.post('http://localhost:8080/api/projects', project);
-            dispatch(addNewProjectDispatch(response.data));
+            dispatch(onProjectSelectedForTrackingDispatch(response.data));
             dispatch(toggleAddModal('projects'));
         } catch (error) {
             console.log(error);

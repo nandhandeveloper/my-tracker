@@ -1,18 +1,20 @@
 import {
-    SPINNER_IN_PROJECT,
-    ADD_NEW_PROJECT,
-    ON_PROJECT_SELECTED,
-    ON_PROJECT_DELETE_CONFIRM_MODAL_TOGGLE,
+    GET_ALL_STORIES,
+    ADD_NEW_STORY,
+    SPINNER_IN_STORY,
+    ERROR_IN_STORY,
+    ON_STORY_SELECTED,
+    ON_STORY_DELETE_CONFIRM_MODAL_TOGGLE,
     ON_DELETE_SUCCESS,
     ON_DELETE_ERROR,
     ON_DELETE_SPINNER,
-    REFRESH_PROJECTS_AFTER_DELETE,
-    ON_REFRESH_PROJECTS_AFTER_MODIFY,
-    MODIFIED_PROJECT_SPINNER,
-    MODIFIED_PROJECT_ERROR,
-    MODIFY_PROJECT_SUCCESS_TOGGLE,
-} from '../../actions/projects/actionTypes';
-import { GET_ALL_PROJECTS, ProjectsActionTypes } from '../../actions/projects/actionTypes';
+    REFRESH_STORYS_AFTER_DELETE,
+    ON_REFRESH_STORYS_AFTER_MODIFY,
+    MODIFIED_STORY_SPINNER,
+    MODIFIED_STORY_ERROR,
+    MODIFY_STORY_SUCCESS_TOGGLE,
+    StoriesActionTypes,
+} from '../../actions/stories/actionTypes';
 import { Story } from '../../../models/Story';
 
 interface StoriesStates {
@@ -43,7 +45,7 @@ const initialState: StoriesStates = {
     isModifiedStorySuccess: false,
 };
 
-const getAllStories = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const getAllStories = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -53,7 +55,7 @@ const getAllStories = (state: StoriesStates, action: ProjectsActionTypes): Stori
     };
 };
 
-const toggleSpinner = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const toggleSpinner = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { isLoading },
     } = action;
@@ -63,7 +65,17 @@ const toggleSpinner = (state: StoriesStates, action: ProjectsActionTypes): Stori
     };
 };
 
-const addNewStory = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const toggleError = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
+    const {
+        payload: { isError },
+    } = action;
+    return {
+        ...state,
+        isError,
+    };
+};
+
+const addNewStory = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const { stories } = state;
     const {
         payload: { data },
@@ -75,7 +87,7 @@ const addNewStory = (state: StoriesStates, action: ProjectsActionTypes): Stories
     };
 };
 
-const onStorySelected = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const onStorySelected = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -101,7 +113,7 @@ const onDeleteSuccessToggle = (state: StoriesStates): StoriesStates => {
     };
 };
 
-const onDeleteError = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const onDeleteError = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -111,7 +123,7 @@ const onDeleteError = (state: StoriesStates, action: ProjectsActionTypes): Stori
     };
 };
 
-const onDeleteSpinner = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const onDeleteSpinner = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -121,7 +133,7 @@ const onDeleteSpinner = (state: StoriesStates, action: ProjectsActionTypes): Sto
     };
 };
 
-const onRefreshStoriesAfterDelete = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const onRefreshStoriesAfterDelete = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -133,7 +145,7 @@ const onRefreshStoriesAfterDelete = (state: StoriesStates, action: ProjectsActio
     };
 };
 
-const onRefreshStoriesAfterModify = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const onRefreshStoriesAfterModify = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data: modifiedStory },
     } = action;
@@ -151,7 +163,7 @@ const onRefreshStoriesAfterModify = (state: StoriesStates, action: ProjectsActio
         selectedStory: undefined,
     };
 };
-const modifiedStorySpinner = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const modifiedStorySpinner = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -161,7 +173,7 @@ const modifiedStorySpinner = (state: StoriesStates, action: ProjectsActionTypes)
         isModifiedSpinnerLoading: data,
     };
 };
-const modifiedStoryError = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const modifiedStoryError = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -172,7 +184,7 @@ const modifiedStoryError = (state: StoriesStates, action: ProjectsActionTypes): 
     };
 };
 
-const modifiedStorySuccessToggle = (state: StoriesStates, action: ProjectsActionTypes): StoriesStates => {
+const modifiedStorySuccessToggle = (state: StoriesStates, action: StoriesActionTypes): StoriesStates => {
     const {
         payload: { data },
     } = action;
@@ -183,17 +195,19 @@ const modifiedStorySuccessToggle = (state: StoriesStates, action: ProjectsAction
     };
 };
 
-const reducer = (state: StoriesStates = initialState, action: ProjectsActionTypes): StoriesStates => {
+const reducer = (state: StoriesStates = initialState, action: StoriesActionTypes): StoriesStates => {
     switch (action.type) {
-        case GET_ALL_PROJECTS:
+        case GET_ALL_STORIES:
             return getAllStories(state, action);
-        case SPINNER_IN_PROJECT:
+        case SPINNER_IN_STORY:
             return toggleSpinner(state, action);
-        case ADD_NEW_PROJECT:
+        case ERROR_IN_STORY:
+            return toggleError(state, action);
+        case ADD_NEW_STORY:
             return addNewStory(state, action);
-        case ON_PROJECT_SELECTED:
+        case ON_STORY_SELECTED:
             return onStorySelected(state, action);
-        case ON_PROJECT_DELETE_CONFIRM_MODAL_TOGGLE:
+        case ON_STORY_DELETE_CONFIRM_MODAL_TOGGLE:
             return onDeleteConfirmModalToggle(state);
         case ON_DELETE_SUCCESS:
             return onDeleteSuccessToggle(state);
@@ -201,15 +215,15 @@ const reducer = (state: StoriesStates = initialState, action: ProjectsActionType
             return onDeleteError(state, action);
         case ON_DELETE_SPINNER:
             return onDeleteSpinner(state, action);
-        case REFRESH_PROJECTS_AFTER_DELETE:
+        case REFRESH_STORYS_AFTER_DELETE:
             return onRefreshStoriesAfterDelete(state, action);
-        case ON_REFRESH_PROJECTS_AFTER_MODIFY:
+        case ON_REFRESH_STORYS_AFTER_MODIFY:
             return onRefreshStoriesAfterModify(state, action);
-        case MODIFIED_PROJECT_SPINNER:
+        case MODIFIED_STORY_SPINNER:
             return modifiedStorySpinner(state, action);
-        case MODIFIED_PROJECT_ERROR:
+        case MODIFIED_STORY_ERROR:
             return modifiedStoryError(state, action);
-        case MODIFY_PROJECT_SUCCESS_TOGGLE:
+        case MODIFY_STORY_SUCCESS_TOGGLE:
             return modifiedStorySuccessToggle(state, action);
 
         default:

@@ -13,7 +13,7 @@ import {
     MODIFIED_STORY_SPINNER,
     MODIFIED_STORY_ERROR,
     MODIFY_STORY_SUCCESS_TOGGLE,
-    storiesActionTypes,
+    StoriesActionTypes,
 } from './actionTypes';
 
 import { Action } from 'redux';
@@ -22,12 +22,11 @@ import { ThunkAction } from 'redux-thunk';
 import axios from 'axios';
 import { RootState } from '../../index';
 
-import { AddProject } from '../../../models/Project';
-import { Story } from './../../../models/Story';
+import { Story, AddStory } from './../../../models/Story';
 
 import { toggleAddModal } from '../actionCreators';
 
-const storiesError = (isError: boolean): storiesActionTypes => {
+const storiesError = (isError: boolean): StoriesActionTypes => {
     return {
         type: ERROR_IN_STORY,
         payload: {
@@ -36,7 +35,7 @@ const storiesError = (isError: boolean): storiesActionTypes => {
     };
 };
 
-const storiesSpinner = (isLoading: boolean): storiesActionTypes => {
+const storiesSpinner = (isLoading: boolean): StoriesActionTypes => {
     return {
         type: SPINNER_IN_STORY,
         payload: {
@@ -45,7 +44,7 @@ const storiesSpinner = (isLoading: boolean): storiesActionTypes => {
     };
 };
 
-const addNewStoryDispatch = (newStory: Story): storiesActionTypes => {
+const addNewStoryDispatch = (newStory: Story): StoriesActionTypes => {
     return {
         type: ADD_NEW_STORY,
         payload: {
@@ -63,7 +62,7 @@ const getStoriesDispatch = (data: Story[]) => {
     };
 };
 
-export const onStorySelected = (storySelected: Story | undefined): storiesActionTypes => {
+export const onStorySelected = (storySelected: Story | undefined): StoriesActionTypes => {
     return {
         type: ON_STORY_SELECTED,
         payload: {
@@ -72,7 +71,7 @@ export const onStorySelected = (storySelected: Story | undefined): storiesAction
     };
 };
 
-export const onDeleteConfirmModalToggle = (): storiesActionTypes => {
+export const onDeleteStoryConfirmModalToggle = (): StoriesActionTypes => {
     return {
         type: ON_STORY_DELETE_CONFIRM_MODAL_TOGGLE,
         payload: {
@@ -81,7 +80,7 @@ export const onDeleteConfirmModalToggle = (): storiesActionTypes => {
     };
 };
 
-export const deleteStoryError = (isError: boolean): storiesActionTypes => {
+export const deleteStoryError = (isError: boolean): StoriesActionTypes => {
     return {
         type: ON_DELETE_ERROR,
         payload: {
@@ -90,7 +89,7 @@ export const deleteStoryError = (isError: boolean): storiesActionTypes => {
     };
 };
 
-export const deleteStorySpinner = (isLoading: boolean): storiesActionTypes => {
+export const deleteStorySpinner = (isLoading: boolean): StoriesActionTypes => {
     return {
         type: ON_DELETE_SPINNER,
         payload: {
@@ -99,7 +98,7 @@ export const deleteStorySpinner = (isLoading: boolean): storiesActionTypes => {
     };
 };
 
-export const deleteStorySuccessToggle = (): storiesActionTypes => {
+export const deleteStorySuccessToggle = (): StoriesActionTypes => {
     return {
         type: ON_DELETE_SUCCESS,
         payload: {
@@ -108,7 +107,7 @@ export const deleteStorySuccessToggle = (): storiesActionTypes => {
     };
 };
 
-export const onRefreshStoriesAfterDelete = (stroy: Story): storiesActionTypes => {
+export const onRefreshStoriesAfterDelete = (stroy: Story): StoriesActionTypes => {
     return {
         type: REFRESH_STORYS_AFTER_DELETE,
         payload: {
@@ -117,7 +116,7 @@ export const onRefreshStoriesAfterDelete = (stroy: Story): storiesActionTypes =>
     };
 };
 
-export const modifiedStoryError = (isError: boolean): storiesActionTypes => {
+export const modifiedStoryError = (isError: boolean): StoriesActionTypes => {
     return {
         type: MODIFIED_STORY_ERROR,
         payload: {
@@ -126,7 +125,7 @@ export const modifiedStoryError = (isError: boolean): storiesActionTypes => {
     };
 };
 
-export const modifiedStorySpinner = (isLoading: boolean): storiesActionTypes => {
+export const modifiedStorySpinner = (isLoading: boolean): StoriesActionTypes => {
     return {
         type: MODIFIED_STORY_SPINNER,
         payload: {
@@ -135,7 +134,7 @@ export const modifiedStorySpinner = (isLoading: boolean): storiesActionTypes => 
     };
 };
 
-export const onRefreshStoriesAfterModify = (modifiedProject: boolean): storiesActionTypes => {
+export const onRefreshStoriesAfterModify = (modifiedProject: boolean): StoriesActionTypes => {
     return {
         type: ON_REFRESH_STORYS_AFTER_MODIFY,
         payload: {
@@ -144,7 +143,7 @@ export const onRefreshStoriesAfterModify = (modifiedProject: boolean): storiesAc
     };
 };
 
-export const modifyStorySuccessToggle = (): storiesActionTypes => {
+export const modifyStorySuccessToggle = (): StoriesActionTypes => {
     return {
         type: MODIFY_STORY_SUCCESS_TOGGLE,
         payload: {
@@ -170,7 +169,7 @@ export const getAllStories = (): ThunkAction<void, RootState, unknown, Action<st
     };
 };
 // Update the type used for new stroy
-export const addNewStory = (newStoy: AddProject): ThunkAction<void, RootState, unknown, Action<string>> => {
+export const addNewStory = (newStoy: AddStory): ThunkAction<void, RootState, unknown, Action<string>> => {
     return async (dispatch) => {
         try {
             dispatch(storiesError(false));
@@ -197,7 +196,7 @@ export const onDeleteStory = (story: Story): ThunkAction<void, RootState, unknow
             // Update the end point
             await axios.delete(`http://localhost:8080/api/stories/${story._id}`);
             dispatch(onRefreshStoriesAfterDelete(story));
-            dispatch(onDeleteConfirmModalToggle());
+            dispatch(onDeleteStoryConfirmModalToggle());
             dispatch(deleteStorySuccessToggle());
         } catch (error) {
             console.log(error);
@@ -208,18 +207,21 @@ export const onDeleteStory = (story: Story): ThunkAction<void, RootState, unknow
     };
 };
 
-export const onModifyProject = (
-    modifiedProject: AddProject,
+export const onModifyStory = (
+    modifiedStory: Story,
     id: string,
+    fromModal: boolean,
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
     // TODO from backend
     return async (dispatch) => {
         try {
             dispatch(modifiedStoryError(false));
             dispatch(modifiedStorySpinner(true));
-            const response = await axios.put(`http://localhost:8080/api/projects/${id}`, modifiedProject);
-            dispatch(onRefreshStoriesAfterDelete(response.data));
-            dispatch(toggleAddModal('stories'));
+            const response = await axios.put(`http://localhost:8080/api/stories/${id}`, modifiedStory);
+            dispatch(onRefreshStoriesAfterModify(response.data));
+            if (fromModal) {
+                dispatch(toggleAddModal('stories'));
+            }
             dispatch(modifyStorySuccessToggle());
         } catch (error) {
             console.log(error);

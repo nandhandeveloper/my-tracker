@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AddModal from '../../components/AddModal/AddModal';
 import BasicLayout from '../../components/BasicLayout/BasicLayout';
@@ -12,15 +12,24 @@ import StoryList from '../../components/StoryList/StoryList';
 import FullScreenSpinner from '../../components/FullScreenSpinner/FullScreenSpinner';
 import { SPINNERCOLOR } from '../../components/Spinner/Spinner';
 
-const Stories: React.FC<{}> = () => {
+import * as actions from './../../store/actions/actionCreators';
+import StoryDeleteConfirmModal from '../../components/StoryDeleteConfirmModal/StoryDeleteConfirmModal';
+
+const Stories: React.FC<Record<string, never>> = () => {
     const dispatch = useDispatch();
     const history = useHistory();
-
     const {
         commonRed: { isStoriesAddModalOpen },
-        storiesRed: { stories, isLoading },
+        storiesRed: { stories, isLoading, isDeleteConfirmModalOpen },
     } = useSelector((state: RootState) => state);
+
+    const onLoadStories = useCallback(() => dispatch(actions.getAllStories()), [dispatch]);
+    const onToggleDeleteModal = () => dispatch(actions.onDeleteStoryConfirmModalToggle());
+
     const pageName = history.location.pathname.slice(1);
+    useEffect(() => {
+        onLoadStories();
+    }, [onLoadStories]);
 
     return (
         <BasicLayout>
@@ -39,6 +48,10 @@ const Stories: React.FC<{}> = () => {
             >
                 <AddStoryForm />
             </AddModal>
+            <StoryDeleteConfirmModal
+                isDialogOpen={isDeleteConfirmModalOpen}
+                onToggleDeleteModal={onToggleDeleteModal}
+            />
         </BasicLayout>
     );
 };

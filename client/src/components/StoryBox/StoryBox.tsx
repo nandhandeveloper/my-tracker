@@ -8,6 +8,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import clsx from 'clsx';
 
+import * as actions from './../../store/actions/actionCreators';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
 const useStyles = makeStyles((theme) => ({
     taskBox: {
         margin: theme.spacing(1),
@@ -26,7 +30,12 @@ const useStyles = makeStyles((theme) => ({
         borderLeft: `6px solid ${grey[500]}`,
     },
     complete: {
-        borderLeft: `16px solid ${green[500]}`,
+        borderLeft: `6px solid ${green[500]}`,
+    },
+    noColor: {
+        color: 'transparent',
+        background: 'transparent',
+        cursor: 'default',
     },
 }));
 
@@ -36,17 +45,34 @@ type Props = {
 
 const StoryBox: React.FC<Props> = ({ story }: Props) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const pageName = history.location.pathname.slice(1);
 
-    const openStoryDeleteModal = (id: string) => {
-        console.log('openStoryDeleteModal', id);
+    const onToggleStoryDeleteModal = () => dispatch(actions.onDeleteStoryConfirmModalToggle());
+    const onStorySelected = (selectedStory: Story) => dispatch(actions.onStorySelected(selectedStory));
+    const onStorySaveModalToggle = () => dispatch(actions.toggleAddModal(pageName));
+    const onEditStory = (editStory: Story, storyId: string) =>
+        dispatch(actions.onModifyStory(editStory, storyId, false));
+
+    const onDeleteStoryHandler = () => {
+        onStorySelected(story);
+        onToggleStoryDeleteModal();
     };
     const onUpdateTaskHandler = () => {
-        console.log('onUpdateTaskHandler');
+        onStorySelected(story);
+        onStorySaveModalToggle();
     };
     const onCompleteTaskHandler = () => {
+        const modifiedStory = { ...story };
+        modifiedStory.status = StoryStatus.COMPLETE;
+        onEditStory(modifiedStory, modifiedStory._id);
         console.log('onCompleteTaskHandler');
     };
     const onStatusChangedHandler = () => {
+        const modifiedStory = { ...story };
+        modifiedStory.status = story.status === StoryStatus.ACTIVE ? StoryStatus.INACTIVE : StoryStatus.ACTIVE;
+        onEditStory(modifiedStory, modifiedStory._id);
         console.log('onStatusChangedHandler');
     };
     return (
@@ -61,33 +87,46 @@ const StoryBox: React.FC<Props> = ({ story }: Props) => {
             })}
         >
             <CardContent>
-                <Grid container alignItems="stretch">
+                <Grid container justify="space-between">
                     <Grid item xs={11}>
                         <Typography variant="body1"> {story.content}</Typography>
-                        <Typography variant="body2">
+                        <Typography variant="body2" color="secondary">
                             <strong>{story.technology}</strong>
                         </Typography>
                         <Grid container>
-                            <Grid item xs={6}>
-                                {story.status !== StoryStatus.COMPLETE ? (
-                                    <Switch
-                                        checked={story.status === StoryStatus.ACTIVE ? true : false}
-                                        onChange={onStatusChangedHandler}
-                                        color="primary"
-                                        name="status"
-                                    />
-                                ) : null}
+                            <Grid item xs={6} container>
+                                <Grid item xs={6}>
+                                    {story.status !== StoryStatus.COMPLETE ? (
+                                        <Switch
+                                            checked={story.status === StoryStatus.ACTIVE ? true : false}
+                                            onChange={onStatusChangedHandler}
+                                            color="primary"
+                                            name="status"
+                                        />
+                                    ) : null}
+                                </Grid>
+                                <Grid item xs={6}>
+                                    {story.status === StoryStatus.ACTIVE ? (
+                                        <IconButton
+                                            size="small"
+                                            color="inherit"
+                                            aria-label="complete task"
+                                            onClick={onCompleteTaskHandler}
+                                        >
+                                            <DoneIcon />
+                                        </IconButton>
+                                    ) : null}
+                                </Grid>
 
-                                {story.status === StoryStatus.ACTIVE ? (
-                                    <IconButton
-                                        size="small"
-                                        color="inherit"
-                                        aria-label="complete task"
-                                        onClick={onCompleteTaskHandler}
-                                    >
-                                        <DoneIcon />
-                                    </IconButton>
-                                ) : null}
+                                {/* <IconButton
+                                    size="small"
+                                    color="inherit"
+                                    aria-label="complete task"
+                                    onClick={() => story.status === StoryStatus.ACTIVE && onCompleteTaskHandler()}
+                                    className={clsx({ [classes.noColor]: story.status !== StoryStatus.ACTIVE })}
+                                >
+                                    <DoneIcon />
+                                </IconButton> */}
                             </Grid>
                             <Grid item xs={6}></Grid>
                         </Grid>
@@ -104,7 +143,7 @@ const StoryBox: React.FC<Props> = ({ story }: Props) => {
                                 size="small"
                                 color="inherit"
                                 aria-label="delete task"
-                                onClick={() => openStoryDeleteModal(story._id)}
+                                onClick={() => onDeleteStoryHandler()}
                             >
                                 <DeleteIcon />
                             </IconButton>

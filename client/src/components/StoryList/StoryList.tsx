@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     },
     noStroiesBox: {
         marginTop: theme.spacing(8),
-    }
+    },
 }));
 
 type Props = {

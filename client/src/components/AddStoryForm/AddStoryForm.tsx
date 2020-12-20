@@ -4,9 +4,12 @@ import { StoryFormData } from '../../common/formData/StoryFormData';
 import { OnInputChangeHandler } from '../../common/DynamicForm/OnInputChangeHandler';
 import DynamicFormField from '../DynamicFormGenerator/DynamicFormField';
 import { RootState } from '../../store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Project } from '../../models/Project';
 import { InputTextValidations } from '../../common/DynamicForm/InputTextValidation';
+
+import * as actions from './../../store/actions/stories/actions';
+import { AddStory, Story } from '../../models/Story';
 
 const useStyles = makeStyles((theme) => ({
     formLayout: {
@@ -18,10 +21,10 @@ const useStyles = makeStyles((theme) => ({
 const initialState: { [key: string]: any } = StoryFormData;
 
 const AddStoryForm: React.FC<Record<string, never>> = () => {
+    const dispatch = useDispatch();
     const classes = useStyles();
-
     const {
-        projectsRed: { projects },
+        projectsRed: { projects, selectedProjectTracking },
         storiesRed: { selectedStory },
     } = useSelector((state: RootState) => state);
 
@@ -32,11 +35,14 @@ const AddStoryForm: React.FC<Record<string, never>> = () => {
             label: name,
         };
     });
-
     initialState.project.options = [...(projectsOptionsList || [])];
+    initialState.project.value = selectedProjectTracking?.name || '';
 
     const [storyForm, setStoryForm] = useState<{ [key: string]: any }>(initialState);
     const [isStoryFormValid, setIsStoryFormValid] = useState<boolean>(false);
+
+    const onAddNewStroy = (newStroy: AddStory) => dispatch(actions.addNewStory(newStroy));
+    const onEditStory = (editStory: Story, storyId: string) => dispatch(actions.onModifyStory(editStory, storyId, true));
 
     useEffect(() => {
         const isFormValid = Object.values(storyForm).every((field) => field.isValid);
@@ -87,7 +93,6 @@ const AddStoryForm: React.FC<Record<string, never>> = () => {
     const onSaveStorySubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const {
-            name: { value: nameValue },
             status: { value: statusValue },
             content: { value: contentValue },
             critical: { value: criticalValue },
@@ -95,16 +100,22 @@ const AddStoryForm: React.FC<Record<string, never>> = () => {
             type: { value: typeValue },
             project: { value: projectValue },
         } = storyForm;
-        const project = projects?.filter((projectObj) => projectObj.name === projectValue);
-        console.log({
-            name: nameValue,
+        const project = projects?.filter((projectObj) => projectObj.name === projectValue).pop();
+        const newStory: AddStory = {
             status: statusValue,
             content: contentValue,
-            project: project,
+            project: project!,
             critical: criticalValue,
             technology: technologyValue,
             type: typeValue,
-        });
+        };
+        console.log('newStory::', newStory);
+        if (selectedStory) {
+            const modifiedStory: Story = { ...selectedStory, ...newStory };
+            onEditStory(modifiedStory, modifiedStory._id);
+        } else {
+            onAddNewStroy(newStory);
+        }
     };
     return (
         <Paper className={classes.formLayout}>

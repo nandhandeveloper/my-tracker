@@ -22,8 +22,9 @@ import CodeIcon from '@material-ui/icons/Code';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleAddModal } from '../../store/actions/actionCreators';
+import { RootState } from '../../store';
 
 const useStyles = makeStyles((theme) => ({
     drawer: {
@@ -85,6 +86,9 @@ const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactEleme
     const history = useHistory();
     const [activeRoute, setActiveRoute] = useState<string>('/projects');
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+    const {
+        projectsRed: { selectedProjectTracking },
+    } = useSelector((state: RootState) => state);
 
     useEffect(() => {
         setActiveRoute(history.location.pathname);
@@ -125,7 +129,9 @@ const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactEleme
                             </IconButton>
                         </Grid>
                         <Grid item xs={8} container justify="center" alignItems="center">
-                            <Typography className={classes.projectName}>Project Name</Typography>
+                            {selectedProjectTracking && (
+                                <Typography className={classes.projectName}>{selectedProjectTracking.name}</Typography>
+                            )}
                         </Grid>
                         <Grid item xs={2} container justify="flex-end">
                             <IconButton edge="end" color="inherit" aria-label="add" onClick={onOpenAddModel}>

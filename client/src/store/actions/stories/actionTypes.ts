@@ -15,4 +15,4 @@ export const MODIFIED_STORY_SPINNER = 'MODIFIED_STORY_SPINNER';
 export const MODIFIED_STORY_ERROR = 'MODIFIED_STORY_ERROR';
 export const MODIFY_STORY_SUCCESS_TOGGLE = 'MODIFY_STORY_SUCCESS_TOGGLE';
 
-export type storiesActionTypes = ActionType;
+export type StoriesActionTypes = ActionType;

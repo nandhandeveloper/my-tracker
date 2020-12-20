@@ -55,6 +55,7 @@ const DynamicFormField: React.FC<Props> = ({
         options,
         row,
         radios,
+        disabled,
     } = controlDetails;
     let formELement = null;
     switch (type) {
@@ -69,6 +70,7 @@ const DynamicFormField: React.FC<Props> = ({
                         value={value}
                         error={isTouched && !isValid}
                         onChange={(e) => onInputChangeHandler(e)}
+                        disabled={disabled}
                     >
                         {options.map((option: Option) => (
                             <MenuItem key={option.id} value={option.value}>

@@ -1,5 +1,6 @@
 import {
     SPINNER_IN_PROJECT,
+    ERROR_IN_PROJECT,
     ADD_NEW_PROJECT,
     ON_PROJECT_SELECTED,
     ON_PROJECT_ACTIONS_MODAL_TOGGLE,
@@ -12,6 +13,7 @@ import {
     MODIFIED_PROJECT_SPINNER,
     MODIFIED_PROJECT_ERROR,
     MODIFY_PROJECT_SUCCESS_TOGGLE,
+    ON_PROJECT_SELECTED_FOR_TRACKING,
 } from './../../actions/projects/actionTypes';
 import { Project } from './../../../models/Project';
 import { GET_ALL_PROJECTS, ProjectsActionTypes } from '../../actions/projects/actionTypes';
@@ -19,6 +21,7 @@ import { GET_ALL_PROJECTS, ProjectsActionTypes } from '../../actions/projects/ac
 interface ProjectStates {
     projects: Project[] | undefined;
     selectedProject: Project | undefined;
+    selectedProjectTracking: Project | undefined;
     isError: boolean;
     isLoading: boolean;
     isActionsModalOpen: boolean;
@@ -34,6 +37,7 @@ interface ProjectStates {
 const initialState: ProjectStates = {
     projects: undefined,
     selectedProject: undefined,
+    selectedProjectTracking: undefined,
     isError: false,
     isLoading: false,
     isActionsModalOpen: false,
@@ -46,13 +50,19 @@ const initialState: ProjectStates = {
     isModifiedprojectSuccess: false,
 };
 
+const getCurrentPojectSelectedForTracking = (projects: Project[]): Project | undefined => {
+    return projects.filter((project: Project) => project.isChoosen).pop();
+};
+
 const getAllProjects = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
     const {
-        payload: { data },
+        payload: { data: projects },
     } = action;
+    const selectedProjectTracking = getCurrentPojectSelectedForTracking(projects);
     return {
         ...state,
-        projects: data,
+        projects,
+        selectedProjectTracking,
     };
 };
 
@@ -65,6 +75,17 @@ const toggleSpinner = (state: ProjectStates, action: ProjectsActionTypes): Proje
         isLoading,
     };
 };
+
+const toggleError = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
+    const {
+        payload: { isError },
+    } = action;
+    return {
+        ...state,
+        isError,
+    };
+};
+
 
 const addNewProject = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
     const { projects } = state;
@@ -85,6 +106,17 @@ const onProjectSelected = (state: ProjectStates, action: ProjectsActionTypes): P
     return {
         ...state,
         selectedProject: data,
+    };
+};
+
+const onProjectSelectedForTracking = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
+    const {
+        payload: { data: projects },
+    } = action;
+    const selectedProjectTracking = getCurrentPojectSelectedForTracking(projects);
+    return {
+        ...state,
+        selectedProjectTracking,
     };
 };
 
@@ -192,18 +224,23 @@ const modifiedProjectSuccessToggle = (state: ProjectStates, action: ProjectsActi
         ...state,
         isModifiedprojectSuccess: data,
     };
-}
+};
 
 const reducer = (state: ProjectStates = initialState, action: ProjectsActionTypes): ProjectStates => {
     switch (action.type) {
         case GET_ALL_PROJECTS:
             return getAllProjects(state, action);
+        case ERROR_IN_PROJECT:
+            return toggleError(state, action);
         case SPINNER_IN_PROJECT:
             return toggleSpinner(state, action);
         case ADD_NEW_PROJECT:
             return addNewProject(state, action);
         case ON_PROJECT_SELECTED:
             return onProjectSelected(state, action);
+        case ON_PROJECT_SELECTED_FOR_TRACKING:
+            return onProjectSelectedForTracking(state, action);
+
         case ON_PROJECT_ACTIONS_MODAL_TOGGLE:
             return onActionsModalToggle(state);
         case ON_PROJECT_DELETE_CONFIRM_MODAL_TOGGLE:

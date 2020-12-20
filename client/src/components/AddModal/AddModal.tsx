@@ -7,6 +7,7 @@ import BasicLayout from '../BasicLayout/BasicLayout';
 import { useDispatch } from 'react-redux';
 
 import * as actions from '../../store/actions/actionCreators';
+import { useHistory } from 'react-router-dom';
 
 const Transition = React.forwardRef<unknown, SlideProps>(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -27,12 +28,15 @@ type Props = {
 const AddModal: React.FC<Props> = ({ children, isOpen, title, onToggleModal }: Props) => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
+    const pageName = history.location.pathname.slice(1);
 
     const onProjectSelected = () => dispatch(actions.onProjectSelected(undefined));
+    const onStorySelected = () => dispatch(actions.onStorySelected(undefined));
 
     const onCloseAddModal = () => {
         onToggleModal();
-        onProjectSelected();
+        pageName === 'projects' ? onProjectSelected() : onStorySelected();
     };
     return (
         <Dialog fullScreen open={isOpen} onClose={onToggleModal} TransitionComponent={Transition}>

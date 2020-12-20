@@ -29,14 +29,17 @@ export enum StoryStatus {
     COMPLETE = 'Complete',
 }
 
-export interface Story {
-    _id: string;
+export interface AddStory {
     content: string;
     project: Project;
     critical: StoryCritical;
     technology: StoryTechnology;
     type: StoryType;
     status: StoryStatus;
+}
+
+export interface Story extends AddStory {
+    _id: string;
     createdAt: Date;
     updatedAt: Date;
 }

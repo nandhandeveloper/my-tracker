@@ -1,5 +1,22 @@
 import { StoryCritical, StoryTechnology, StoryType, StoryStatus } from './../../models/Story';
 export const StoryFormData = {
+    project: {
+        name: 'project',
+        value: '',
+        type: 'select',
+        options: [],
+        label: 'Project Name',
+        isValid: true,
+        isTouched: true,
+        disabled: true,
+        validations: {
+            required: {
+                value: true,
+                error: 'This is a required field',
+            },
+        },
+        errors: [],
+    },
     content: {
         name: 'content',
         value: '',
@@ -9,22 +26,6 @@ export const StoryFormData = {
         isValid: false,
         isTouched: false,
         multiline: true,
-        validations: {
-            required: {
-                value: true,
-                error: 'This is a required field',
-            },
-        },
-        errors: [],
-    },
-    project: {
-        name: 'project',
-        value: '',
-        type: 'select',
-        options: [],
-        label: 'Project Name',
-        isValid: false,
-        isTouched: false,
         validations: {
             required: {
                 value: true,
