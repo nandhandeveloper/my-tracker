@@ -1,11 +1,11 @@
 import React from 'react';
 import { Project } from '../../models/Project';
 import ProjectBox from '../ProjectBox/ProjectBox';
-import { Typography, Grid, makeStyles } from '@material-ui/core';
+import {  Grid, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     statusBox: {
-        marginBottom: theme.spacing(2),
+        marginBottom: theme.spacing(4),
     },
 }));
 
@@ -13,14 +13,11 @@ type Props = {
     status: string;
     projects: Project[];
 };
-const ProjectStatusBox: React.FC<Props> = ({ status, projects }: Props) => {
+const ProjectStatusBox: React.FC<Props> = ({ projects }: Props) => {
     const classes = useStyles();
     return (
         <Grid container className={classes.statusBox}>
-            <Grid xs={12} item>
-                <Typography variant="h5">{status}</Typography>
-            </Grid>
-            <Grid xs={12} item>
+            <Grid item xs={12} container>
                 {projects.map((project: Project, index: number) => (
                     <ProjectBox key={index} project={project} />
                 ))}

@@ -15,6 +15,10 @@ import FullScreenSpinner from '../../components/FullScreenSpinner/FullScreenSpin
 import NoRecordsFound from '../../components/NoRecordsFound/NoRecordsFound';
 import ProjectActionsModal from '../../components/ProjectActionsModal/ProjectActionsModal';
 import DeleteConfirmModal from '../../components/DeleteConfirmModal/DeleteConfirmModal';
+import StatusesList from '../../components/StatusesList/StatusesList';
+import { PROJECTS_STATUS } from '../../common/constants';
+
+const projectsStatusList = PROJECTS_STATUS;
 
 const Projects: React.FC<Record<string, never>> = () => {
     const dispatch = useDispatch();
@@ -31,6 +35,7 @@ const Projects: React.FC<Record<string, never>> = () => {
     const toggleAddProjectModal = () => dispatch(actions.toggleAddModal(pageName));
     const toggleActionsModal = () => dispatch(actions.onActionsModalToggle());
     const toggleProjectDeleteConfirmModal = () => dispatch(actions.onDeleteConfirmModalToggle());
+    const onProjectSelected = () => dispatch(actions.onProjectSelected(undefined));
 
     useEffect(() => {
         getAllProjects();
@@ -39,7 +44,7 @@ const Projects: React.FC<Record<string, never>> = () => {
     return (
         <BasicLayout>
             <PageTitle title="Projects" />
-
+            <StatusesList statusList={projectsStatusList} />
             {isLoading ? (
                 <FullScreenSpinner color={SPINNERCOLOR.SECONDARY} text="Fetching Products" />
             ) : (
@@ -56,8 +61,11 @@ const Projects: React.FC<Record<string, never>> = () => {
             </AddModal>
             <ProjectActionsModal
                 isOpen={isActionsModalOpen}
-                onCloseModal={() => toggleActionsModal()}
                 project={selectedProject}
+                onCloseModal={() => {
+                    onProjectSelected();
+                    toggleActionsModal();
+                }}
                 onEditHandler={() => {
                     toggleActionsModal();
                     toggleAddProjectModal();

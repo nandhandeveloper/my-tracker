@@ -7,13 +7,16 @@ import { RootState } from '../../store';
 import { toggleAddModal } from '../../store/actions/actionCreators';
 import { useHistory } from 'react-router-dom';
 import AddStoryForm from '../../components/AddStoryForm/AddStoryForm';
-import StroyStatusBox from '../../components/StroyStatusBox/StroyStatusBox';
 import StoryList from '../../components/StoryList/StoryList';
 import FullScreenSpinner from '../../components/FullScreenSpinner/FullScreenSpinner';
 import { SPINNERCOLOR } from '../../components/Spinner/Spinner';
 
 import * as actions from './../../store/actions/actionCreators';
 import StoryDeleteConfirmModal from '../../components/StoryDeleteConfirmModal/StoryDeleteConfirmModal';
+import { STORIES_STATUS } from '../../common/constants';
+import StatusesList from '../../components/StatusesList/StatusesList';
+
+const storiesStatusList = STORIES_STATUS;
 
 const Stories: React.FC<Record<string, never>> = () => {
     const dispatch = useDispatch();
@@ -34,7 +37,7 @@ const Stories: React.FC<Record<string, never>> = () => {
     return (
         <BasicLayout>
             <PageTitle title="Stories" />
-            <StroyStatusBox />
+            <StatusesList statusList={storiesStatusList} />
 
             {isLoading ? (
                 <FullScreenSpinner color={SPINNERCOLOR.SECONDARY} text="Fetching Stories" />

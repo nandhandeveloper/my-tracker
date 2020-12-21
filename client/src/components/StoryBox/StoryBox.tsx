@@ -1,7 +1,7 @@
 import React from 'react';
 import { Story, StoryCritical, StoryStatus } from '../../models/Story';
 
-import { Card, CardContent, Grid, IconButton, makeStyles, Switch, Typography } from '@material-ui/core';
+import { Box, Card, CardContent, Grid, IconButton, makeStyles, Switch, Typography } from '@material-ui/core';
 import { green, grey, orange, red, yellow } from '@material-ui/core/colors';
 import DoneIcon from '@material-ui/icons/Done';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import * as actions from './../../store/actions/actionCreators';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import Moment from 'react-moment';
 
 const useStyles = makeStyles((theme) => ({
     taskBox: {
@@ -36,6 +37,15 @@ const useStyles = makeStyles((theme) => ({
         color: 'transparent',
         background: 'transparent',
         cursor: 'default',
+    },
+    storyTech: {
+        background: theme.palette.info.light,
+        color: theme.palette.common.white,
+        padding: theme.spacing(1),
+        borderRadius: theme.spacing(1),
+    },
+    leftMargin: {
+        marginLeft: theme.spacing(2),
     },
 }));
 
@@ -88,12 +98,26 @@ const StoryBox: React.FC<Props> = ({ story }: Props) => {
         >
             <CardContent>
                 <Grid container justify="space-between">
-                    <Grid item xs={11}>
+                    <Grid item xs={11} container>
                         <Typography variant="body1"> {story.content}</Typography>
-                        <Typography variant="body2" color="secondary">
-                            <strong>{story.technology}</strong>
-                        </Typography>
-                        <Grid container>
+
+                        <Grid item xs={12} container justify="flex-start" alignItems="center">
+                            <Grid item>
+                                <Typography variant="body1" color="secondary">
+                                    <strong>{story.type.toUpperCase()}</strong>
+                                </Typography>
+                            </Grid>
+                            <Grid item className={classes.leftMargin}>
+                                <Box mb={1} mt={1}>
+                                    <Typography variant="body2">
+                                        <span className={classes.storyTech}>
+                                            <strong>{story.technology.toUpperCase()}</strong>
+                                        </span>
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12} container>
                             <Grid item xs={6} container>
                                 <Grid item xs={6}>
                                     {story.status !== StoryStatus.COMPLETE ? (
@@ -117,18 +141,15 @@ const StoryBox: React.FC<Props> = ({ story }: Props) => {
                                         </IconButton>
                                     ) : null}
                                 </Grid>
-
-                                {/* <IconButton
-                                    size="small"
-                                    color="inherit"
-                                    aria-label="complete task"
-                                    onClick={() => story.status === StoryStatus.ACTIVE && onCompleteTaskHandler()}
-                                    className={clsx({ [classes.noColor]: story.status !== StoryStatus.ACTIVE })}
-                                >
-                                    <DoneIcon />
-                                </IconButton> */}
                             </Grid>
                             <Grid item xs={6}></Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="body2" color="textSecondary">
+                                <em>
+                                    <Moment fromNow>{story.createdAt}</Moment>
+                                </em>
+                            </Typography>
                         </Grid>
                     </Grid>
                     <Grid item xs={1}>

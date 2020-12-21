@@ -206,14 +206,18 @@ export const addNewProject = (newProject: AddProject): ThunkAction<void, RootSta
 export const onProjectSelectedForTracking = (
     project: Project,
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
-    // TODO from backend
     return async (dispatch) => {
         try {
+            const copyProject = { ...project };
             dispatch(projectError(false));
             dispatch(projetSpinner(true));
-            const response = await axios.post('http://localhost:8080/api/projects', project);
+            copyProject.isChoosen = true;
+            const response = await axios.put(
+                `http://localhost:8080/api/projects/${copyProject._id}?isSelected=true`,
+                copyProject,
+            );
+            dispatch(onActionsModalToggle());
             dispatch(onProjectSelectedForTrackingDispatch(response.data));
-            dispatch(toggleAddModal('projects'));
         } catch (error) {
             console.log(error);
             dispatch(projectError(true));

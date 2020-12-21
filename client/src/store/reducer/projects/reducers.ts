@@ -86,7 +86,6 @@ const toggleError = (state: ProjectStates, action: ProjectsActionTypes): Project
     };
 };
 
-
 const addNewProject = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
     const { projects } = state;
     const {
@@ -110,13 +109,22 @@ const onProjectSelected = (state: ProjectStates, action: ProjectsActionTypes): P
 };
 
 const onProjectSelectedForTracking = (state: ProjectStates, action: ProjectsActionTypes): ProjectStates => {
+    const { projects } = state;
     const {
-        payload: { data: projects },
+        payload: { data },
     } = action;
-    const selectedProjectTracking = getCurrentPojectSelectedForTracking(projects);
+    const filteredProjects = projects?.map((project) => {
+        if (project._id === data._id) {
+            return data;
+        } else {
+            project.isChoosen = false;
+            return project;
+        }
+    });
     return {
         ...state,
-        selectedProjectTracking,
+        projects: filteredProjects,
+        selectedProjectTracking: data,
     };
 };
 

@@ -63,6 +63,7 @@ const ProjectActionsModal: React.FC<Props> = ({
 
     const onProjectSelectedForTracking = (selectedProject: Project) =>
         dispatch(actions.onProjectSelectedForTracking(selectedProject));
+    const onProjectSelected = () => dispatch(actions.onProjectSelected(undefined));
 
     const onActionButtonClicked = (actiontype: ProjectMenuActions) => {
         switch (actiontype) {
@@ -74,6 +75,7 @@ const ProjectActionsModal: React.FC<Props> = ({
                 break;
             case ProjectMenuActions.Select:
                 onProjectSelectedForTracking(project!);
+                onProjectSelected();
                 break;
         }
     };
@@ -126,18 +128,20 @@ const ProjectActionsModal: React.FC<Props> = ({
                             Modify
                         </Button>
                     </Grid>
-                    <Grid xs={12} sm={3} className={classes.actionButton}>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            className={classes.selectBtn}
-                            color="primary"
-                            onClick={() => onActionButtonClicked(ProjectMenuActions.Select)}
-                            startIcon={<CheckCircleIcon />}
-                        >
-                            Select
-                        </Button>
-                    </Grid>
+                    {project?.isChoosen === false && (
+                        <Grid xs={12} sm={3} className={classes.actionButton}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                className={classes.selectBtn}
+                                color="primary"
+                                onClick={() => onActionButtonClicked(ProjectMenuActions.Select)}
+                                startIcon={<CheckCircleIcon />}
+                            >
+                                Select
+                            </Button>
+                        </Grid>
+                    )}
                 </Grid>
             </DialogActions>
         </Dialog>

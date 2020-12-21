@@ -1,41 +1,16 @@
+import { StoryCritical, StoryStatus } from './../models/Story';
+import { ProjectStatus } from './../models/Project';
+
 import { Techstack } from './../models/Techstack';
 import { NavItem } from '../models/NavItem';
-import { Project, ProjectStatus } from '../models/Project';
 
-
-export const PROJECTS: Project[] = [
-    {
-        _id: '1',
-        name: 'My Tracker',
-        status: ProjectStatus.ACTIVE,
-        isChoosen: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
-    {
-        _id: '2',
-        name: 'What To Eat',
-        status: ProjectStatus.INACTIVE,
-        isChoosen: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
-    {
-        _id: '3',
-        name: 'Art Yeah',
-        status: ProjectStatus.ONHOLD,
-        isChoosen: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    }, 
-    {
-        _id: '4',
-        name: 'Greeting App',
-        status: ProjectStatus.INACTIVE,
-        isChoosen: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    }
+export const PROJECTS_STATUS: string[] = [ProjectStatus.ACTIVE, ProjectStatus.INACTIVE, ProjectStatus.ONHOLD];
+export const STORIES_STATUS: string[] = [
+    StoryStatus.INACTIVE,
+    StoryStatus.COMPLETE,
+    StoryCritical.HIGH,
+    StoryCritical.MEDIUM,
+    StoryCritical.LOW,
 ];
 
 export const NAV_ITEMS: NavItem[] = [

@@ -35,6 +35,7 @@ const DeleteConfirmModal: React.FC<Props> = ({ isOpen, type, onCloseModal }: Pro
         projectsRed: { selectedProject, isDeleteSpinnerLoading },
     } = useSelector((state: RootState) => state);
     const onDeleteProject = () => dispatch(actions.onDeleteProject(selectedProject!));
+    const onProjectSelected = () => dispatch(actions.onProjectSelected(undefined));
 
     useEffect(() => {
         const isFormValid = Object.values(projectConfirmForm).every((field) => field.isValid);
@@ -52,11 +53,18 @@ const DeleteConfirmModal: React.FC<Props> = ({ isOpen, type, onCloseModal }: Pro
 
     const onDeleteProjectHandler = () => {
         onDeleteProject();
+        onProjectSelected();
         setProjectConfirmForm(initialState);
     };
 
+    const onCloseDeleteConfirmModal = () => {
+        onProjectSelected();
+        setProjectConfirmForm(initialState);
+        onCloseModal();
+    };
+
     return (
-        <Dialog open={isOpen} onClose={onCloseModal}>
+        <Dialog open={isOpen} onClose={onCloseDeleteConfirmModal}>
             <DialogTitle id="alert-dialog-title">
                 <Grid container justify="center" alignItems="center">
                     <Grid item>
@@ -94,7 +102,7 @@ const DeleteConfirmModal: React.FC<Props> = ({ isOpen, type, onCloseModal }: Pro
                     </Grid>
                 ) : (
                     <>
-                        <Button onClick={onCloseModal} color="primary">
+                        <Button onClick={onCloseDeleteConfirmModal} color="primary">
                             Cancel
                         </Button>
                         <Button
