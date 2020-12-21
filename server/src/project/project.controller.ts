@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { Project } from './project.model';
 import { ProjectDto } from './dto/project.dto';
@@ -61,9 +62,14 @@ export class ProjectController {
   @ApiBody({ type: ProjectDto })
   async updateProject(
     @Param('id') id: string,
+    @Query('isSelected') isSelected: boolean,
     @Body() updateProject: ProjectDto,
   ): Promise<ProjectDto> {
-    return await this.projectService.updateProject(id, updateProject);
+    return await this.projectService.updateProject(
+      id,
+      updateProject,
+      isSelected,
+    );
   }
 
   @Delete(':id')

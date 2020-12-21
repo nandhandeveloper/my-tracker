@@ -180,8 +180,10 @@ describe('ProjectController', () => {
       status: ProjectStatus.ACTIVE,
       isChoosen: false,
     };
+    const isSelected = false;
     const updatedProject: ProjectDto = await projectController.updateProject(
       incomingId,
+      isSelected,
       incomingProject,
     );
     expect(updatedProject).toHaveProperty('_id');
@@ -196,6 +198,47 @@ describe('ProjectController', () => {
     expect(updatedProject.createdAt).not.toEqual(updatedProject.updatedAt);
   });
 
+  it('UPDATE PROJECT - on Selection for tracking of different project, should unselected the previous one and select the latest one', async () => {
+    const existingProject = {
+      name: 'project1',
+      status: ProjectStatus.INACTIVE,
+      isChoosen: true,
+    };
+
+    const response: ProjectDto = await projectController.createProject(
+      existingProject,
+    );
+    const incomingId = response._id;
+    const incomingProject = {
+      name: 'project2',
+      status: ProjectStatus.ACTIVE,
+      isChoosen: true,
+    };
+    const isSelected = true;
+    const updatedProject: ProjectDto = await projectController.updateProject(
+      incomingId,
+      isSelected,
+      incomingProject,
+    );
+    expect(updatedProject).toHaveProperty('_id');
+    expect(updatedProject).toHaveProperty('name', incomingProject.name);
+    expect(updatedProject).toHaveProperty('status', incomingProject.status);
+    expect(updatedProject).toHaveProperty(
+      'isChoosen',
+      incomingProject.isChoosen,
+    );
+    expect(updatedProject).toHaveProperty('createdAt');
+    expect(updatedProject).toHaveProperty('updatedAt');
+    expect(updatedProject.createdAt).not.toEqual(updatedProject.updatedAt);
+
+    //Check if only one project has isChoose as true
+    const allProjects: ProjectDto[] = await projectController.findAllProject();
+    const selectedProjectsCount = allProjects.filter(
+      (project) => project.isChoosen,
+    ).length;
+    expect(selectedProjectsCount).toBe(1);
+  });
+
   it('UPDATE PROJECT -  should throw not found error when a project with an ID not present in database', async () => {
     const invalidProjectId = INVALID_PROJECT_ID;
     const incomingProject = {
@@ -203,8 +246,13 @@ describe('ProjectController', () => {
       status: ProjectStatus.ACTIVE,
       isChoosen: false,
     };
+    const isSelected = false;
     await expect(
-      projectController.updateProject(invalidProjectId, incomingProject),
+      projectController.updateProject(
+        invalidProjectId,
+        isSelected,
+        incomingProject,
+      ),
     ).rejects.toThrow(
       new NotFoundException(`No Project found with the id ${invalidProjectId}`),
     );
@@ -217,8 +265,9 @@ describe('ProjectController', () => {
       status: ProjectStatus.ACTIVE,
       isChoosen: false,
     };
+    const isSelected = false;
     await expect(
-      projectController.updateProject(errorId, incomingProject),
+      projectController.updateProject(errorId, isSelected, incomingProject),
     ).rejects.toThrow(
       new InternalServerErrorException(
         `Something went wrong. Please try again`,
