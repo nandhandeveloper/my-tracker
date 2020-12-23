@@ -10,6 +10,7 @@ import { InputTextValidations } from '../../common/DynamicForm/InputTextValidati
 
 import * as actions from './../../store/actions/stories/actions';
 import { AddStory, Story } from '../../models/Story';
+import Spinner, { SPINNERCOLOR } from '../Spinner/Spinner';
 
 const useStyles = makeStyles((theme) => ({
     formLayout: {
@@ -24,8 +25,8 @@ const AddStoryForm: React.FC<Record<string, never>> = () => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const {
-        projectsRed: { projects, selectedProjectTracking },
-        storiesRed: { selectedStory },
+        projectsRed: { projects, selectedProjectTracking, },
+        storiesRed: { selectedStory, isModifiedSpinnerLoading },
     } = useSelector((state: RootState) => state);
 
     const projectsOptionsList = projects?.map(({ _id, name }: Project) => {
@@ -42,7 +43,8 @@ const AddStoryForm: React.FC<Record<string, never>> = () => {
     const [isStoryFormValid, setIsStoryFormValid] = useState<boolean>(false);
 
     const onAddNewStroy = (newStroy: AddStory) => dispatch(actions.addNewStory(newStroy));
-    const onEditStory = (editStory: Story, storyId: string) => dispatch(actions.onModifyStory(editStory, storyId, true));
+    const onEditStory = (editStory: Story, storyId: string) =>
+        dispatch(actions.onModifyStory(editStory, storyId, true));
 
     useEffect(() => {
         const isFormValid = Object.values(storyForm).every((field) => field.isValid);
@@ -109,7 +111,6 @@ const AddStoryForm: React.FC<Record<string, never>> = () => {
             technology: technologyValue,
             type: typeValue,
         };
-        console.log('newStory::', newStory);
         if (selectedStory) {
             const modifiedStory: Story = { ...selectedStory, ...newStory };
             onEditStory(modifiedStory, modifiedStory._id);
@@ -132,10 +133,15 @@ const AddStoryForm: React.FC<Record<string, never>> = () => {
                         ))}
 
                         <Box m={4}></Box>
-                        <Grid container justify="flex-end">
-                            <Button type="submit" variant="contained" color="primary" disabled={!isStoryFormValid}>
-                                Submit
-                            </Button>
+
+                        <Grid container justify={isModifiedSpinnerLoading ? 'center' : 'flex-end'}>
+                            {isModifiedSpinnerLoading ? (
+                                <Spinner color={SPINNERCOLOR.SECONDARY} text="Saving Data" />
+                            ) : (
+                                <Button type="submit" variant="contained" color="primary" disabled={!isStoryFormValid}>
+                                    Submit
+                                </Button>
+                            )}
                         </Grid>
                     </Grid>
                     <Grid item xs={false} sm={2} lg={4}></Grid>

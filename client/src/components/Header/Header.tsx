@@ -84,15 +84,17 @@ const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactEleme
 
     const dispatch = useDispatch();
     const history = useHistory();
-    const [activeRoute, setActiveRoute] = useState<string>('/projects');
+    const [activeRoute, setActiveRoute] = useState<string>('/stories');
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
     const {
         projectsRed: { selectedProjectTracking },
     } = useSelector((state: RootState) => state);
 
+    const routhPath = history.location.pathname;
+
     useEffect(() => {
-        setActiveRoute(history.location.pathname);
-    }, [history.location.pathname]);
+        setActiveRoute(routhPath);
+    }, [routhPath]);
 
     const getListItemIcon = (name: string) => {
         switch (name) {
@@ -118,6 +120,19 @@ const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactEleme
         onToggleDrawerHandler();
     };
 
+    const showAddDataIcon = () => {
+        const pageName = activeRoute.slice(1);
+        if (pageName === 'projects' || (pageName === 'stories' && selectedProjectTracking)) {
+            return (
+                <IconButton edge="end" color="inherit" aria-label="add" onClick={onOpenAddModel}>
+                    <AddCircleOutlineIcon />
+                </IconButton>
+            );
+        } else {
+            return null;
+        }
+    };
+
     return (
         <>
             <AppBar title={appName}>
@@ -134,9 +149,7 @@ const Header: React.FC<Props> = ({ appName, navItems }: Props): React.ReactEleme
                             )}
                         </Grid>
                         <Grid item xs={2} container justify="flex-end">
-                            <IconButton edge="end" color="inherit" aria-label="add" onClick={onOpenAddModel}>
-                                <AddCircleOutlineIcon />
-                            </IconButton>
+                            {showAddDataIcon()}
                         </Grid>
                     </Grid>
                 </Toolbar>

@@ -5,6 +5,9 @@ import clsx from 'clsx';
 import { Status } from '../../models/Status';
 
 const useStyles = makeStyles((theme) => ({
+    statusList: {
+        marginBottom: theme.spacing(4),
+    },
     redColorBox: {
         height: '10px',
         width: '10px',
@@ -44,7 +47,7 @@ type Props = {
 const StatusesList: React.FC<Props> = ({ statusList }: Props) => {
     const classes = useStyles();
     return (
-        <Grid item xs={12} container justify="space-around">
+        <Grid item xs={12} container justify="space-around" className={classes.statusList}>
             {statusList.map((status) => {
                 return (
                     <Grid item key={status}>

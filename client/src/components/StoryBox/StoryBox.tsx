@@ -77,13 +77,11 @@ const StoryBox: React.FC<Props> = ({ story }: Props) => {
         const modifiedStory = { ...story };
         modifiedStory.status = StoryStatus.COMPLETE;
         onEditStory(modifiedStory, modifiedStory._id);
-        console.log('onCompleteTaskHandler');
     };
     const onStatusChangedHandler = () => {
         const modifiedStory = { ...story };
         modifiedStory.status = story.status === StoryStatus.ACTIVE ? StoryStatus.INACTIVE : StoryStatus.ACTIVE;
         onEditStory(modifiedStory, modifiedStory._id);
-        console.log('onStatusChangedHandler');
     };
     return (
         <Card

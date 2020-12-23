@@ -1,4 +1,4 @@
-export { toggleAddModal } from './common/actions';
+export { toggleAddModal, onInitialLoadData } from './common/actions';
 export {
     getAllProjects,
     addNewProject,

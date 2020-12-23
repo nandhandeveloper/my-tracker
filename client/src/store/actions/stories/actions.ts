@@ -53,7 +53,7 @@ const addNewStoryDispatch = (newStory: Story): StoriesActionTypes => {
     };
 };
 
-const getStoriesDispatch = (data: Story[]) => {
+export const getStoriesDispatch = (data: Story[]) => {
     return {
         type: GET_ALL_STORIES,
         payload: {
@@ -152,13 +152,13 @@ export const modifyStorySuccessToggle = (): StoriesActionTypes => {
     };
 };
 
-export const getAllStories = (): ThunkAction<void, RootState, unknown, Action<string>> => {
+export const getAllStories = (projectId: string): ThunkAction<void, RootState, unknown, Action<string>> => {
     return async (dispatch) => {
         try {
             dispatch(storiesError(false));
             dispatch(storiesSpinner(true));
             // Update end point for particular project only
-            const response = await axios.get('http://localhost:8080/api/stories');
+            const response = await axios.get(`http://localhost:8080/api/stories/project/${projectId}`);
             dispatch(getStoriesDispatch(response.data));
         } catch (error) {
             console.log(error);

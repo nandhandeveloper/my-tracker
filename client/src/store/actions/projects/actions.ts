@@ -53,7 +53,7 @@ const addNewProjectDispatch = (newProject: Project) => {
     };
 };
 
-const getProjectsDispatch = (data: Project[]) => {
+export const getProjectsDispatch = (data: Project[]) => {
     return {
         type: GET_ALL_PROJECTS,
         payload: {
@@ -208,6 +208,7 @@ export const onProjectSelectedForTracking = (
 ): ThunkAction<void, RootState, unknown, Action<string>> => {
     return async (dispatch) => {
         try {
+            console.log('project:::', project);
             const copyProject = { ...project };
             dispatch(projectError(false));
             dispatch(projetSpinner(true));

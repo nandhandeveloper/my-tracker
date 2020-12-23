@@ -15,6 +15,7 @@ import * as actions from './../../store/actions/actionCreators';
 import StoryDeleteConfirmModal from '../../components/StoryDeleteConfirmModal/StoryDeleteConfirmModal';
 import { STORIES_STATUS } from '../../common/constants';
 import StatusesList from '../../components/StatusesList/StatusesList';
+import NoRecordsFound from '../../components/NoRecordsFound/NoRecordsFound';
 
 const storiesStatusList = STORIES_STATUS;
 
@@ -24,15 +25,18 @@ const Stories: React.FC<Record<string, never>> = () => {
     const {
         commonRed: { isStoriesAddModalOpen },
         storiesRed: { stories, isLoading, isDeleteConfirmModalOpen },
+        projectsRed: { selectedProjectTracking },
     } = useSelector((state: RootState) => state);
 
-    const onLoadStories = useCallback(() => dispatch(actions.getAllStories()), [dispatch]);
+    const onLoadStories = useCallback((projectId) => dispatch(actions.getAllStories(projectId)), [dispatch]);
     const onToggleDeleteModal = () => dispatch(actions.onDeleteStoryConfirmModalToggle());
 
     const pageName = history.location.pathname.slice(1);
     useEffect(() => {
-        onLoadStories();
-    }, [onLoadStories]);
+        if (selectedProjectTracking) {
+            onLoadStories(selectedProjectTracking?._id);
+        }
+    }, [onLoadStories, selectedProjectTracking]);
 
     return (
         <BasicLayout>
@@ -41,8 +45,10 @@ const Stories: React.FC<Record<string, never>> = () => {
 
             {isLoading ? (
                 <FullScreenSpinner color={SPINNERCOLOR.SECONDARY} text="Fetching Stories" />
-            ) : (
+            ) : selectedProjectTracking ? (
                 <StoryList stories={stories || []} />
+            ) : (
+                <NoRecordsFound text="Please select a Project to display Stories" />
             )}
             <AddModal
                 title="New Story"

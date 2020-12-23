@@ -176,11 +176,15 @@ const onRefreshProjectsAfterDelete = (state: ProjectStates, action: ProjectsActi
     const {
         payload: { data },
     } = action;
-    const { projects } = state;
-
+    const { projects, selectedProjectTracking } = state;
+    let trackingProject = selectedProjectTracking;
+    if (trackingProject?._id === data._id) {
+        trackingProject = undefined;
+    }
     return {
         ...state,
         projects: projects?.filter((project: Project) => project._id !== data._id),
+        selectedProjectTracking: trackingProject,
     };
 };
 
