@@ -60,8 +60,10 @@ export class ProjectService {
     const existingProject = await this.projectModel
       .findOne({ isChoosen: true })
       .exec();
-    existingProject.isChoosen = false;
-    await existingProject.save();
+    if (existingProject) {
+      existingProject.isChoosen = false;
+      await existingProject.save();
+    }
   }
 
   async updateProject(
